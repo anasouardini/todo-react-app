@@ -1,0 +1,11 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [1, 2],
+        "semi": [1, "always"],
+        "quotes": [1, "single"]
+    }
+}

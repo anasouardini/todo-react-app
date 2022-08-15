@@ -1,0 +1,49 @@
+/*===========================================
+================ CHUNK: BASE/LAYOUT
+===========================================*/
+@use "../abstracts/" as vars;
+
+body{
+    min-height: 100vh;
+}
+
+#root{
+
+    display: flex;
+    flex-direction: column;
+}
+
+header{
+    nav{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+
+        a{
+            margin: 0 .4rem;
+        }
+    }
+    background: #000;
+    color: white;
+}
+
+.overlay{
+    background: rgba(0, 0, 0, .8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100vw;
+    height: 100vh;
+}
+
+.footer{
+    background: #000;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+ 
+    margin-top: auto;
+}
