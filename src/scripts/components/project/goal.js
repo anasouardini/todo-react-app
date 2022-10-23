@@ -79,10 +79,7 @@ const Goal = (props) => {
                 <p style={{pointerEvents: 'none', display: 'inline'}}>Add a New Card</p>
             </div>
 
-            {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
             {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
-            {/* form */}
             {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );

@@ -48,10 +48,7 @@ export default function Work(props) {
 
             <div>{listChildren(state.itemObj, Workflow)}</div>
 
-            {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObjid)} */}
             {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
-            {/* form */}
             {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );

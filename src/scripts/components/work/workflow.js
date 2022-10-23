@@ -86,10 +86,7 @@ export default function Workflow(props) {
 
             <div style={style.parent.list}>{listChildren(state.itemObj, Project)}</div>
 
-            {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
             {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
-            {/* form */}
             {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );
