@@ -137,10 +137,14 @@ export default function Form(props) {
         } else if (action == FORM_MODE.create) {
             fields = form.fields.child;
         } else if (action == FORM_MODE.delete) {
-            TODO.deleteItem(state.parentState.itemObj.type, state.parentState.itemObj.id);
-            //! the objMerge works because the render function overrides the itemObj to be a reference
-            bridge[TODO.getParentID(state.parentState.itemObj.id)].render(); //no args means no state mutation
-            return;
+            const parentID = TODO.getParentID(state.parentState.itemObj.type, state.parentState.itemObj.id);
+            await TODO.deleteItem(state.parentState.itemObj.type, state.parentState.itemObj.id);
+
+            state.parentState.form.show = false;
+            bridgeState(props.id, state.parentState);
+
+            bridge[parentID].render(); //no args means no state mutation
+            // return;
         }
 
         if (fields) {
@@ -158,7 +162,7 @@ export default function Form(props) {
 
             if (action == FORM_MODE.create) {
                 //- blindly passing properties over to the factory function
-                const res = await TODO.create(
+                await TODO.createItem(
                     state.parentState.itemObj.type,
                     state.parentState.itemObj.id,
                     deepClone(form.fields.child)

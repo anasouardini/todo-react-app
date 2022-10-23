@@ -106,10 +106,6 @@ const TODO = (() => {
         },
     };
 
-    const deleteItem = (itemType, id) => {
-        delete dbObj[itemType].items[id];
-    };
-
     const saveWork = () => {
         localStorage.setItem('dbObj', dbObj);
     };
@@ -129,8 +125,9 @@ const TODO = (() => {
         return dbObj[parentType].items[parentID];
     };
 
-    const getParentID = (childType, childID) => {
-        return dbObj[childType][childID].parentID;
+    const getParentID = (type, id) => {
+        console.log(dbObj[type].items);
+        return dbObj[type].items[id].parentID;
     };
 
     const getChildren = (itemType, itemID) => {
@@ -166,10 +163,6 @@ const TODO = (() => {
 
     const burnWork = () => {
         localStorage.removeItem('dbObj');
-    };
-
-    const moveItem = (itemID, newParentID) => {
-        console.log('not implemented for now');
     };
 
     //! not fixed yet
@@ -213,9 +206,13 @@ const TODO = (() => {
         console.log('FIXING out of order');
     };
 
-    //! not fixed yet
-    //CREATION
-    const create = async (parentType, parentID, fields) => {
+    const updateHahsh = (res) => {
+        dbObj.hash = res.hash;
+        delete res.hash;
+    };
+
+    //ACTIONS
+    const createItem = async (parentType, parentID, fields) => {
         const childType = getChildType(parentType);
 
         let siblings = getChildren(parentType, parentID);
@@ -241,12 +238,11 @@ const TODO = (() => {
         });
 
         if (res) {
-            dbObj.hash = res.hash;
+            updateHahsh(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
-
-            delete res.hash;
             dbObj[res.type].items[res.id] = res;
+
             saveWork();
             return true;
         }
@@ -254,7 +250,6 @@ const TODO = (() => {
         return false;
     };
 
-    //? MODIFICATION -- order matters
     const modifyItem = (itemType, ID, newFields) => {
         const itemKeys = Object.keys(newFields);
         const targetItem = dbObj[itemType].items[ID];
@@ -274,10 +269,31 @@ const TODO = (() => {
         });
     };
 
+    const moveItem = (itemID, newParentID) => {
+        console.log('not implemented for now');
+    };
+
+    const deleteItem = async (itemType, itemID) => {
+        const res = await BRIDGE.remove(itemType + 's', {filters: {id: itemID}});
+        if (res) {
+            updateHahsh(res);
+
+            const parentChildrenIDs = getParent(itemType, itemID).childrenIDs;
+            const itemIDIndex = parentChildrenIDs.indexOf(itemID);
+
+            delete dbObj[itemType].items[itemID];
+            parentChildrenIDs.splice(itemIDIndex, 1);
+            saveWork();
+            return true;
+        }
+
+        return false;
+    };
+
     //EXPORTS
     return {
         itemsFallback: factories.fallback,
-        create,
+        createItem,
         modifyItem,
         tags,
         priorities,
