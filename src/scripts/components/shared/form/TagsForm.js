@@ -44,7 +44,7 @@ export default function TagsForm(props) {
         },
     };
 
-    const availTags = TODO.TAGS.list;
+    const availTags = [...TODO.TAGS.list];
     let usedTags = [];
 
     const tagCheckbox = (ID, e) => {
@@ -78,7 +78,7 @@ export default function TagsForm(props) {
                     availTags.map((tag, index) => {
                         const tagUsed = props.fieldValue.some((usedTag) => usedTag.ID == tag.ID);
                         if (tagUsed) {
-                            usedTags = props.fieldValue;
+                            usedTags = [...props.fieldValue];
                         }
                         return (
                             <Tag

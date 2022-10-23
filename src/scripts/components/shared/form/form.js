@@ -3,6 +3,7 @@ import formHandler from './formHandler';
 const {FORM_MODE} = formHandler;
 
 import TagsForm from './TagsForm';
+import Tag from '../tag';
 
 export default function Form(props) {
     const [state, setState] = useState({
@@ -19,6 +20,9 @@ export default function Form(props) {
     };
 
     const subFormAction = (returnedValue, action) => {
+        const fields = props.form.mode == 'edit' ? {...props.form.fields.self} : {...props.form.fields.child};
+        fields[state.subForms.show].value = returnedValue;
+
         let subFormState = {};
 
         if (action == 'submit') {
@@ -32,12 +36,12 @@ export default function Form(props) {
         const newState = {
             subForms: {
                 ...state.subForms,
+                show: '',
                 ...subFormState,
             },
         };
 
-        //close subForm
-        newState.subForms.show = '';
+        // console.log('new state', newState);
         setState(newState);
     };
     const showSubForm = (subform, fieldValue, e) => {
@@ -121,12 +125,12 @@ export default function Form(props) {
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
         }
-
+        const formCpy = {...props.form};
         let fields = undefined;
         if (action == FORM_MODE.edit) {
-            fields = props.form.fields.self;
+            fields = formCpy.fields.self;
         } else if (action == FORM_MODE.create) {
-            fields = props.form.fields.child;
+            fields = formCpy.fields.child;
         }
 
         if (fields) {
@@ -145,28 +149,29 @@ export default function Form(props) {
         props.action(
             {
                 itemObj: props.itemObj,
-                form: props.form,
+                form: formCpy,
             },
             action
         );
     };
 
     const listFields = () => {
-        const fields = props.form.mode == 'edit' ? props.form.fields.self : props.form.fields.child;
+        const fields = props.form.mode == 'edit' ? {...props.form.fields.self} : {...props.form.fields.child};
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
             // console.log(field.type);
             if (field.type != 'text') {
-                // return <TagsForm tags={field.value} key={fieldKey} />;
                 return (
-                    <button
-                        data-type={field.type}
-                        name={field.type}
-                        key={fieldKey}
-                        onClick={showSubForm.bind(this, field.type, field.value)}
-                    >
-                        Add Tags
-                    </button>
+                    <div name={field.type} data-type={field.type} key={field.type}>
+                        <button key={fieldKey} onClick={showSubForm.bind(this, field.type, field.value)}>
+                            Add Tags
+                        </button>
+                        {field.value.map((tag) => (
+                            <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                                {tag.text}
+                            </Tag>
+                        ))}
+                    </div>
                 );
             } else {
                 return (
@@ -180,45 +185,47 @@ export default function Form(props) {
     };
 
     return (
-        <div className="overlay" onClick={formAction.bind(this, FORM_MODE.cancel)}>
-            <div style={style.pannel} data-parent-id={props.itemObj.ID}>
-                <h2 style={style.pannel.h2}>{props.form.title} </h2>
+        <>
+            <div className="overlay" onClick={formAction.bind(this, FORM_MODE.cancel)}>
+                <div style={style.pannel} data-parent-id={props.itemObj.ID}>
+                    <h2 style={style.pannel.h2}>{props.form.title} </h2>
 
-                {/* inputs */}
-                <div className="fields" style={style.pannel.inputs}>
-                    {listFields()}
-                </div>
+                    {/* inputs */}
+                    <div className="fields" style={style.pannel.inputs}>
+                        {listFields()}
+                    </div>
 
-                {/* Buttons */}
-                <div style={style.pannel.buttons}>
-                    <button
-                        style={style.pannel.buttons.button}
-                        onClick={formAction.bind(this, props.form.mode)}
-                    >
-                        {props.form.submit}
-                    </button>
-                    <button
-                        style={style.pannel.buttons.button}
-                        onClick={formAction.bind(this, FORM_MODE.cancel)}
-                    >
-                        Cancel
-                    </button>
-
-                    {/* DELETE BUTTON */}
-                    {props.form.mode != 'create' ? (
+                    {/* Buttons */}
+                    <div style={style.pannel.buttons}>
                         <button
                             style={style.pannel.buttons.button}
-                            onClick={formAction.bind(this, FORM_MODE.delete)}
+                            onClick={formAction.bind(this, props.form.mode)}
                         >
-                            Delete
+                            {props.form.submit}
                         </button>
-                    ) : (
-                        <></>
-                    )}
+                        <button
+                            style={style.pannel.buttons.button}
+                            onClick={formAction.bind(this, FORM_MODE.cancel)}
+                        >
+                            Cancel
+                        </button>
+
+                        {/* DELETE BUTTON */}
+                        {props.form.mode != 'create' ? (
+                            <button
+                                style={style.pannel.buttons.button}
+                                onClick={formAction.bind(this, FORM_MODE.delete)}
+                            >
+                                Delete
+                            </button>
+                        ) : (
+                            <></>
+                        )}
+                    </div>
                 </div>
+                {/* SUB FORM */}
             </div>
-            {/* SUB FORM */}
             {state.subForms.show != '' ? renderSubForm() : <></>}
-        </div>
+        </>
     );
 }
