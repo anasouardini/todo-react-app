@@ -14,10 +14,10 @@ import {
 import {Tag} from '../../imports/components';
 
 export default function Project(props) {
-    const [state, setState] = useState(sharedState(props.itemObj, 'Workflow', 'Project'));
+    const [state, setState] = useState(sharedState(props.itemObj));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState = undefined) => {
+        initBridge(state.itemObj.id, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -48,22 +48,22 @@ export default function Project(props) {
     return (
         <div style={style.project}>
             {/* project tags */}
-            <div className="tags">
+            {/* <div className="tags">
                 {state.itemObj.fields.tags.value.map((tag) => (
-                    <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                    <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                         {tag.text}
                     </Tag>
                 ))}
-            </div>
+            </div> */}
 
             <h3 style={{paddingRight: '25px'}}>
-                <Link to={`/project/${state.itemObj.ID}`}>{state.itemObj.fields.title.value}</Link>
+                <Link to={`/project/${state.itemObj.id}`}>{state.itemObj.fields.title.value}</Link>
             </h3>
             <div
                 style={style.project.edit}
                 onClick={(e) => {
                     e.stopPropagation();
-                    showMenu(state.itemObj.ID);
+                    showMenu(state.itemObj.id);
                 }}
             >
                 ...
@@ -71,10 +71,10 @@ export default function Project(props) {
             <p style={{marginTop: '.5rem'}}>{state.itemObj.fields.desc.value}</p>
 
             {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
-            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
+            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
+            {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {/* form */}
-            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
+            {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );
 }

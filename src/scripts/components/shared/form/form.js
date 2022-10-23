@@ -19,9 +19,9 @@ export default function Form(props) {
                 value: [],
             },
         },
-        parentState: deepClone(bridge[props.ID].state),
+        parentState: deepClone(bridge[props.id].state),
     });
-    // console.log(deepClone(bridge[props.ID].state.form));
+    // console.log(deepClone(bridge[props.id].state.form));
 
     const subFormsResolver = {
         tags: TagsForm,
@@ -137,10 +137,9 @@ export default function Form(props) {
         } else if (action == FORM_MODE.create) {
             fields = form.fields.child;
         } else if (action == FORM_MODE.delete) {
-            TODO.deleteItemByID(state.parentState.itemObj.ID);
+            TODO.deleteItem(state.parentState.itemObj.type, state.parentState.itemObj.id);
             //! the objMerge works because the render function overrides the itemObj to be a reference
-            // bridge[state.itemName].render(objMerge(state, {form: {show: false}}));
-            bridge[TODO.getParentID(state.parentState.itemObj.ID)].render(); //no args means to state mutation
+            bridge[TODO.getParentID(state.parentState.itemObj.id)].render(); //no args means no state mutation
             return;
         }
 
@@ -158,14 +157,14 @@ export default function Form(props) {
             });
 
             if (action == FORM_MODE.create) {
-                //- blindly trandporting properties over to the factory function
+                //- blindly passing properties over to the factory function
                 TODO.create(
                     state.parentState.itemObj.childType,
-                    state.parentState.itemObj.ID,
+                    state.parentState.itemObj.id,
                     deepClone(form.fields.child)
                 );
             } else if (action == FORM_MODE.edit) {
-                TODO.modifyItem(state.parentState.itemObj.ID, form.fields.self);
+                TODO.modifyItem(state.parentState.itemObj.id, form.fields.self);
             }
 
             //! this step could be removed
@@ -174,7 +173,7 @@ export default function Form(props) {
 
         state.parentState.form.show = false;
 
-        bridgeState(props.ID, state.parentState);
+        bridgeState(props.id, state.parentState);
     };
 
     const listFields = () => {
@@ -199,7 +198,7 @@ export default function Form(props) {
                             Add Tags
                         </button>
                         {field.value.map((tag) => (
-                            <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                                 {tag.text}
                             </Tag>
                         ))}
@@ -238,7 +237,7 @@ export default function Form(props) {
                     formAction(FORM_MODE.cancel, e);
                 }}
             >
-                <div style={style.pannel} data-parent-id={state.parentState.itemObj.ID}>
+                <div style={style.pannel} data-parent-id={state.parentState.itemObj.id}>
                     <h2 style={style.pannel.h2}>{state.parentState.form.title} </h2>
 
                     {/* inputs */}

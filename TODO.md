@@ -1,7 +1,7 @@
 ## CODE
 
 -   consider maps instead of objects in some cases
--   consider adding conditionalRendering function, for form, menu, etc
+-   consider adding a generic conditionalRendering function, for form, menu, etc
 -   use useRef instead of document.methods
 -   try to split states into smaller states (form doesn't need to set fields in state, just mutate the global obj and render, the separate form state will get changes from the itemObj state)
 -   think about adding ID to workObj(allows making render function more geniric)
@@ -21,6 +21,7 @@
 
 ### good to have
 
+-   refresh button and auto refresh option
 -   ability to create templates and share them with others
 -   autdio notes, and descriptions
 -   timer

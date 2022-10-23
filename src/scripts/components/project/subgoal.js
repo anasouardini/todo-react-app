@@ -15,11 +15,11 @@ import {
 import {Tag} from '../../imports/components';
 
 const SubGoal = (props) => {
-    const [state, setState] = useState(sharedState(props.itemObj, 'Goal', 'SubGoal'));
+    const [state, setState] = useState(sharedState(props.itemObj));
 
     // console.log('subgoal', state.form);
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState = undefined) => {
+        initBridge(state.itemObj.id, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             // console.log('state after mutate', state);
             setState({
@@ -44,11 +44,11 @@ const SubGoal = (props) => {
     };
     return (
         <>
-            <div key={state.itemObj.ID} style={style.parent} className="card" draggable="true">
+            <div key={state.itemObj.id} style={style.parent} className="card" draggable="true">
                 {/* sub goal tags */}
                 <div className="tags">
                     {state.itemObj.fields.tags.value.map((tag) => (
-                        <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                        <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                             {tag.text}
                         </Tag>
                     ))}
@@ -60,7 +60,7 @@ const SubGoal = (props) => {
                 <span
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu(state.itemObj.ID);
+                        showMenu(state.itemObj.id);
                     }}
                     style={style.parent.edit}
                 >
@@ -69,10 +69,10 @@ const SubGoal = (props) => {
             </div>
 
             {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
-            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
+            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
+            {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {/* form */}
-            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
+            {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </>
     );
 };

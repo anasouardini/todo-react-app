@@ -16,10 +16,10 @@ import {
 import {SubGoal, Tag} from '../../imports/components';
 
 const Goal = (props) => {
-    const [state, setState] = useState(sharedState(props.itemObj, 'ProjectPage', 'Goal'));
+    const [state, setState] = useState(sharedState(props.itemObj));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState = undefined) => {
+        initBridge(state.itemObj.id, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -42,11 +42,11 @@ const Goal = (props) => {
         },
     };
     return (
-        <div key={state.itemObj.ID} className="cards-container">
+        <div key={state.itemObj.id} className="cards-container">
             {/* goal tags */}
             <div className="tags">
                 {state.itemObj.fields.tags.value.map((tag) => (
-                    <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                    <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                         {tag.text}
                     </Tag>
                 ))}
@@ -59,7 +59,7 @@ const Goal = (props) => {
                     style={style.parent.header.edit}
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu(state.itemObj.ID);
+                        showMenu(state.itemObj.id);
                     }}
                 >
                     ...
@@ -67,25 +67,25 @@ const Goal = (props) => {
             </div>
 
             {/* sub-goals list */}
-            {listChildren(state.itemObj.children, SubGoal)}
+            {listChildren(state.itemObj, SubGoal)}
 
             {/* add a new sub goal Button */}
             <div
                 className="add-card-btn add-new-subgoal"
-                data-id={state.itemObj.ID}
+                data-id={state.itemObj.id}
                 style={{order: '999999'}}
                 onClick={(e) => {
-                    showForm(state.itemObj.ID, FORM_MODE.create);
+                    showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >
                 <p style={{pointerEvents: 'none', display: 'inline'}}>Add a New Card</p>
             </div>
 
             {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
-            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
+            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
+            {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {/* form */}
-            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
+            {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );
 };

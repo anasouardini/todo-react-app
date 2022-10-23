@@ -1,35 +1,33 @@
 import {React, TODO, deepClone, FORM_MODE, showForm, bridge} from '../../imports/tools';
 import {Form, ItemMenu} from '../../imports/components';
 
-export const renderForm = (ID) => {
-    const parentState = deepClone(bridge[ID].state);
-    return <Form ID={ID} />;
+export const renderForm = (id) => {
+    const parentState = deepClone(bridge[id].state);
+    return <Form id={id} />;
 };
 
-export const renderMenu = (ID) => {
-    const parentState = deepClone(bridge[ID].state);
+export const renderMenu = (id) => {
+    const parentState = deepClone(bridge[id].state);
     return (
         <ItemMenu
-            ID={ID}
+            id={id}
             showForm={() => {
-                showForm(parentState.itemObj.ID, FORM_MODE.edit);
+                showForm(parentState.itemObj.id, FORM_MODE.edit);
             }}
         />
     );
 };
 
-export const showMenu = (ID) => {
-    const parentState = deepClone(bridge[ID].state);
+export const showMenu = (id) => {
+    const parentState = deepClone(bridge[id].state);
 
     parentState.menu.show = true;
-    bridge[ID].render(parentState);
+    bridge[id].render(parentState);
 };
 
-export const sharedState = (itemObj, parentName, itemName) => {
-    // console.log(Object.keys(itemObj.children).length);
+export const sharedState = (itemObj) => {
+    // console.log(itemObj);
     return {
-        parentName,
-        itemName,
         itemObj,
         form: {
             show: false,
@@ -37,8 +35,8 @@ export const sharedState = (itemObj, parentName, itemName) => {
             title: 'form',
             submit: '',
             fields: {
-                self: deepClone(itemObj.fields),
-                child: itemObj?.children ? deepClone(TODO.itemsFallback.getChildFields(itemObj.type)) : null,
+                self: deepClone(itemObj.fields), //work doesn't have a fields prop
+                child: deepClone(TODO.itemsFallback.getChildFields(itemObj.type)),
             },
         },
         menu: {
@@ -47,9 +45,12 @@ export const sharedState = (itemObj, parentName, itemName) => {
     };
 };
 
-export const listChildren = (children, Child) => {
-    return Object.keys(children).map((childKey) => {
-        const child = children[childKey];
-        return <Child key={child.ID} itemObj={child} />;
+export const listChildren = (parent, ChildComponent) => {
+    // console.log(parent);
+    // return <></>;
+    // TODO.dbObj[parent.type].typeDe.child // trying to get child component tag name implicitly
+    const children = TODO.getChildren(parent.type, parent.id);
+    return children.map((child) => {
+        return <ChildComponent key={child.id} itemObj={child} />;
     });
 };

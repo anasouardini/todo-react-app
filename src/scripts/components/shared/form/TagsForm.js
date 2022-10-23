@@ -50,10 +50,10 @@ export default function TagsForm(props) {
     const tagCheckbox = (ID, e) => {
         e.stopPropagation();
 
-        if (!usedTags.some((usedTag) => usedTag.ID == ID)) {
-            usedTags.push(state.availTags.filter((availTag) => availTag.ID == ID)[0]);
+        if (!usedTags.some((usedTag) => usedTag.id == ID)) {
+            usedTags.push(state.availTags.filter((availTag) => availTag.id == ID)[0]);
         } else {
-            usedTags = usedTags.filter((usedTag) => usedTag.ID != ID);
+            usedTags = usedTags.filter((usedTag) => usedTag.id != ID);
         }
 
         e.target.parentNode.style.filter = `grayscale(${Number(e.target.checked)})`;
@@ -76,14 +76,14 @@ export default function TagsForm(props) {
 
                 {state.availTags.length ? (
                     state.availTags.map((tag, index) => {
-                        const tagUsed = state.tagsValue.some((usedTag) => usedTag.ID == tag.ID);
+                        const tagUsed = state.tagsValue.some((usedTag) => usedTag.id == tag.id);
                         if (tagUsed) {
                             usedTags = [...state.tagsValue];
                         }
                         return (
                             <Tag
-                                data-id={tag.ID}
-                                key={tag.ID}
+                                data-id={tag.id}
+                                key={tag.id}
                                 style={{
                                     color: tag.color,
                                     background: tag.background,
@@ -93,11 +93,11 @@ export default function TagsForm(props) {
                                 {tag.text}
                                 <input
                                     defaultChecked={tagUsed ? true : false}
-                                    onChange={tagCheckbox.bind(this, tag.ID)}
+                                    onChange={tagCheckbox.bind(this, tag.id)}
                                     type="checkbox"
-                                    id={tag.ID}
+                                    id={tag.id}
                                     style={style.parent.checkbox}
-                                    value={tag.ID}
+                                    value={tag.id}
                                 />
                             </Tag>
                         );

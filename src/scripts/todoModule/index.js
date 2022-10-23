@@ -1,3 +1,4 @@
+import objMerge from '../tools/objMerge.js';
 import factories from './factories.js';
 
 const TODO = (() => {
@@ -56,113 +57,105 @@ const TODO = (() => {
         },
     };
 
-    //profileID-projectID-GoalID-subGoalID
-    let IDsList = []; //! the worst idea ever
-    const genID = () => {
-        let rand = Math.ceil(Math.random() * 999999999999).toString();
-        while (IDsList.includes(rand)) {
-            rand = Math.ceil(Math.random() * 999999999999).toString();
-        }
-        IDsList.push(rand);
-        return rand;
+    const dbObj = {
+        work: {
+            items: {
+                // dummy: {fields: {}, type: 'Work'},
+            },
+            typeDe: {
+                parent: null,
+                self: 'work',
+                child: 'workflow',
+            },
+        },
+
+        workflow: {
+            items: {},
+            typeDe: {
+                parent: 'work',
+                slef: 'workflow',
+                child: 'project',
+            },
+        },
+
+        project: {
+            items: {},
+            typeDe: {
+                parent: 'workflow',
+                self: 'project',
+                child: 'goal',
+            },
+        },
+
+        goal: {
+            items: {},
+            typeDe: {
+                parent: 'project',
+                self: 'goal',
+                child: 'subgoal',
+            },
+        },
+
+        subgoal: {
+            items: {},
+            typeDe: {
+                parent: 'goal',
+                self: 'subgoal',
+                child: null,
+            },
+        },
     };
 
-    let work = {
-        type: 'work',
-        childType: 'workflow',
-        ID: 'dummy',
-        fields: {},
-        children: {},
-    };
-
-    const deleteItemByID = (IDString) => {
-        let item = work;
-        const IDs = IDString.split('-');
-        let length = 0;
-        IDs.forEach((id) => {
-            length += id.length + 1;
-            let itemID = IDString.slice(0, length - 1);
-            if (length >= IDString.length) {
-                delete item['children'][itemID];
-            } else {
-                item = item['children'][itemID]; //-1 for the last '-'
-            }
-            //FIX two digits
-        });
-
-        saveWork();
-    };
-
-    const getFirstProject = () => {
-        let workflw = work.children[Object.keys(work.children)[0]];
-        return workflw.children[Object.keys(workflw.children)[0]].ID;
+    const deleteItem = (itemType, id) => {
+        delete dbObj[itemType].items[id];
     };
 
     const getWork = () => {
-        return work;
+        return dbObj.work.items.dummy;
     };
 
-    const getItemByID = (IDString) => {
-        let item = work;
-        const IDs = IDString.split('-');
-        let length = 0;
-        IDs.forEach((id) => {
-            length += id.length + 1;
-            item = item['children'][IDString.slice(0, length - 1)]; //-1 for the last '-'
-            //FIX two digits
+    const getItem = (itemType, id) => {
+        return dbObj[itemType].items[id];
+    };
+
+    const getParent = (id) => {
+        const parentType = dbObj[itemType].typeDe.parent;
+        const parentID = dbObj[itemType].items[id].parentID;
+        return dbObj[parentType].items[parentID];
+    };
+
+    const getParentID = (childType, childID) => {
+        return dbObj[childType][childID].parentID;
+    };
+
+    const getChildren = (itemType, itemID) => {
+        console.log(dbObj[dbObj[itemType].typeDe.child]);
+        const children = [];
+        dbObj[itemType].items[itemID].childrenIDs.forEach((childID) => {
+            children.push(dbObj[dbObj[itemType].typeDe.child].items[childID]);
         });
-        //TODO: return false when it doesn't exist
-        return item;
-    };
 
-    const getParent = (childID) => {
-        return getItemByID(getParentID(childID));
-    };
-
-    const getParentID = (childID) => {
-        const reversed = childID.split('-').reverse().join('-');
-
-        return reversed
-            .slice(reversed.indexOf('-') + 1)
-            .split('-')
-            .reverse()
-            .join('-');
-    };
-
-    const saveWork = () => {
-        localStorage.setItem('workflowsObj', JSON.stringify(work));
+        return children;
     };
 
     const loadSavedWork = () => {
-        const oldWorflows = JSON.parse(localStorage.getItem('workflowsObj'));
-        if (oldWorflows) {
-            work = oldWorflows;
-            console.log(work);
-        }
-    };
-
-    const showSavedWork = () => {
-        if (Object.keys(work.children).length) {
-            const firstProfile = work.children[Object.keys(work.children)[0]];
-            const firstProject = firstProfile.children[Object.keys(firstProfile.children)[0]];
+        const chachedWork = JSON.parse(localStorage.getItem('dbObj'));
+        if (chachedWork) {
+            objMerge(dbObj, chachedWork);
+            console.log('dbObj', dbObj);
+            // console.log('cache', chachedWork);
         }
     };
 
     const burnWork = () => {
-        localStorage.removeItem('workflowsObj');
+        localStorage.removeItem('dbObj');
     };
 
-    //TODO: make it generic, update the new parent's UI | add DOM.moveItem_DOM
     const moveItem = (itemID, newParentID) => {
-        const draggedCardCpy = {...TODO.getItemByID(itemID)};
-        TODO.deleteItemByID(itemID);
-        const newItemID = genID();
-        draggedCardCpy.ID = newParentID + '-' + newItemID;
-        TODO.getItemByID(newParentID).children[draggedCardCpy.ID] = draggedCardCpy;
-        saveWork();
-        return draggedCardCpy.ID;
+        console.log('not implemented for now');
     };
 
+    //! not fixed yet
     const isItemOutOfOrder = (item, isCreated) => {
         //! an awful way to do this
 
@@ -170,7 +163,7 @@ const TODO = (() => {
             return false;
         }
 
-        const parent = item.type == 'workflow' ? work : getParent(item.ID);
+        const parent = item.type == 'workflow' ? dbObj : getParent(item.id);
         const siblins = parent.children;
         const resultObj = {siblins, child: item};
         let output = false;
@@ -188,7 +181,7 @@ const TODO = (() => {
         console.log('out of order');
         return output;
     };
-
+    //! not fixed yet
     const fixItemOrder = (fixOrder) => {
         if (fixOrder) {
             if (fixOrder.status == 'behind' || fixOrder.status == 'ahead') {
@@ -203,6 +196,7 @@ const TODO = (() => {
         console.log('FIXING out of order');
     };
 
+    //! not fixed yet
     //CREATION
     const create = (creator, ...args) => {
         const creators = {
@@ -211,34 +205,31 @@ const TODO = (() => {
                 //? the dummy _ is a placeholder for an ID, to make thing consistent
 
                 let itemID = genID();
-                const siblings = work['children'];
+                const siblings = dbObj['children'];
                 //? coersion is smiling
                 if (fields.order.value == 'auto') {
                     fields.order.value = Object.keys(siblings).length + 1;
                 }
                 siblings[itemID] = factories.workflow(itemID, fields);
-                saveWork();
                 return itemID;
             },
             project: (parentID, fields) => {
-                let siblings = work['children'][parentID]['children'];
+                let siblings = dbObj['children'][parentID]['children'];
                 let itemID = parentID + '-' + genID();
                 if (fields.order.value == 'auto') {
                     fields.order.value = Object.keys(siblings).length + 1;
                 }
                 siblings[itemID] = factories.project(itemID, fields);
-                saveWork();
                 return itemID;
             },
             goal: (parentID, fields) => {
                 const workflowID = parentID.slice(0, parentID.indexOf('-'));
-                let siblings = work['children'][workflowID]['children'][parentID]['children'];
+                let siblings = dbObj['children'][workflowID]['children'][parentID]['children'];
                 let itemID = parentID + '-' + genID();
                 if (fields.order.value == 'auto') {
                     fields.order.value = Object.keys(siblings).length + 1;
                 }
                 siblings[itemID] = factories.goal(itemID, fields);
-                saveWork();
                 return itemID;
             },
             subgoal: (parentID, fields) => {
@@ -249,14 +240,13 @@ const TODO = (() => {
                 const projectID = workflowID + '-' + middleID.slice(0, middleID.indexOf('-'));
 
                 let siblings =
-                    work['children'][workflowID]['children'][projectID]['children'][parentID]['children'];
+                    dbObj['children'][workflowID]['children'][projectID]['children'][parentID]['children'];
 
                 let itemID = parentID + '-' + genID();
                 if (fields.order.value == 'auto') {
                     fields.order.value = Object.keys(siblings).length + 1;
                 }
                 siblings[itemID] = factories.subgoal(itemID, fields);
-                saveWork();
                 return itemID;
             },
         };
@@ -264,18 +254,20 @@ const TODO = (() => {
         // check order validity
         //! an awful way to do this
         //? this could cause a problem
-        fixItemOrder(isItemOutOfOrder({ID: `${args[0]}-dummy`, type: creator, ...args[1]}, false));
+        //! not fixed yet
+        //fixItemOrder(isItemOutOfOrder({ID: `${args[0]}-dummy`, type: creator, ...args[1]}, false));
 
         creators[creator](...args);
     };
 
     //? MODIFICATION -- order matters
-    const modifyItem = (ID, newFields) => {
+    const modifyItem = (itemType, ID, newFields) => {
         const itemKeys = Object.keys(newFields);
-        const targetItem = getItemByID(ID);
+        const targetItem = dbObj[itemType].items[ID];
 
         // check order validity
-        fixItemOrder(isItemOutOfOrder({...targetItem, fields: newFields}, true));
+        //! not fixed yet
+        //fixItemOrder(isItemOutOfOrder({...targetItem, fields: newFields}, true));
 
         //TODO: verify inputs
         // if (properties.length != itemKeys.length) {
@@ -286,28 +278,25 @@ const TODO = (() => {
         itemKeys.forEach((key) => {
             targetItem.fields[key] = newFields[key];
         });
-        saveWork();
     };
 
     //EXPORTS
     return {
+        dbObj,
         itemsFallback: factories.fallback,
         create,
         modifyItem,
         tags,
         priorities,
-        getItemByID,
+        getItem,
         getParent,
         getParentID,
-        deleteItemByID,
+        getChildren,
+        deleteItem,
         moveItem,
-        saveWork,
         loadSavedWork,
-        showSavedWork,
         burnWork,
         getWork,
-
-        getFirstProject, ///temporary
     };
 })();
 

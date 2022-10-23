@@ -15,11 +15,11 @@ import {
 import {Workflow} from '../imports/components';
 
 export default function Work(props) {
-    const [state, setState] = useState(sharedState(TODO.getWork(), '', 'WorkPage'));
+    const [state, setState] = useState(sharedState(TODO.getWork()));
     // console.log(state.itemObj.children);
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState) => {
+        initBridge(state.itemObj.id, state, (newState) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -40,19 +40,19 @@ export default function Work(props) {
         <div style={style.parent}>
             <button
                 onClick={(e) => {
-                    showForm(state.itemObj.ID, FORM_MODE.create);
+                    showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >
                 New Workflow
             </button>
 
-            <div>{listChildren(state.itemObj.children, Workflow)}</div>
+            <div>{listChildren(state.itemObj, Workflow)}</div>
 
             {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
-            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
+            {/* {renderMenu(state.menu.show, state.itemObjid)} */}
+            {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {/* form */}
-            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
+            {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );
 }

@@ -14,10 +14,10 @@ import {
 import {Project} from '../../imports/components';
 
 export default function Workflow(props) {
-    const [state, setState] = useState(sharedState(props.itemObj, 'WorkPage', 'Workflow'));
+    const [state, setState] = useState(sharedState(props.itemObj));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState = undefined) => {
+        initBridge(state.itemObj.id, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -67,7 +67,7 @@ export default function Workflow(props) {
                     style={style.parent.title.edit}
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu(state.itemObj.ID);
+                        showMenu(state.itemObj.id);
                     }}
                 >
                     ...
@@ -78,19 +78,19 @@ export default function Workflow(props) {
             <div
                 style={style.parent.addItem}
                 onClick={(e) => {
-                    showForm(state.itemObj.ID, FORM_MODE.create);
+                    showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >
                 ADD ITEM
             </div>
 
-            <div style={style.parent.list}>{listChildren(state.itemObj.children, Project)}</div>
+            <div style={style.parent.list}>{listChildren(state.itemObj, Project)}</div>
 
             {/* Menu */}
-            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
-            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
+            {/* {renderMenu(state.menu.show, state.itemObj.id)} */}
+            {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {/* form */}
-            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
+            {state.form.show ? renderForm(state.itemObj.id) : <></>}
         </div>
     );
 }

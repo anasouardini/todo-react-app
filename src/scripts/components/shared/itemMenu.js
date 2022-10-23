@@ -2,7 +2,7 @@ import {React, useState, objMerge, bridge, bridgeState} from '../../imports/tool
 
 export default function ItemMenu(props) {
     const [state, setState] = useState({
-        parentState: bridge[props.ID].state,
+        parentState: bridge[props.id].state,
     });
 
     const style = {
@@ -29,7 +29,7 @@ export default function ItemMenu(props) {
             <div
                 onClick={(e) => {
                     e.stopPropagation();
-                    bridgeState(props.ID, objMerge(state.parentState, {menu: {show: false}}));
+                    bridgeState(props.id, objMerge(state.parentState, {menu: {show: false}}));
                 }}
                 className="overlay"
             ></div>
