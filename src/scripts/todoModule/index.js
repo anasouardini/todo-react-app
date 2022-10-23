@@ -1,6 +1,7 @@
 import objMerge from '../tools/objMerge';
 import factories from './factories';
 import BRIDGE from '../bridge/bridge';
+import deepClone from '../tools/deepClone';
 
 const TODO = (() => {
     const dbObj = {
@@ -180,6 +181,54 @@ const TODO = (() => {
     };
 
     //ACTIONS
+    const typeFixers = {
+        tagsIDs: JSON.parse,
+    };
+    const fixTypes = (response) => {
+        const res = deepClone(response);
+        Object.keys(res.fields).forEach((key) => {
+            const fixer = typeFixers[key];
+            if (fixer) {
+                res.fields[key].value = fixer(res.fields[key].value);
+            }
+        });
+
+        return res;
+    };
+
+    const structureQuery = (fields, parentType, parentID) => {
+        const flatenedFields = Object.keys(fields).reduce((acc, itemKey) => {
+            return {...acc, [itemKey]: fields[itemKey].value};
+        }, {});
+
+        if (parentType != 'work') {
+            flatenedFields.parent = parentID;
+        }
+
+        //TODO: verify inputs
+        const query = {
+            props: flatenedFields,
+        };
+
+        return query;
+    };
+
+    const restructureResponse = (response) => {
+        const res = deepClone(response);
+        if (res.fields?.tagsIDs) {
+            // adding tags objects in each item of each component
+            if (res?.fields) {
+                // console.log(res.fields.tagsIDs);
+                res.fields.tags = {
+                    type: 'tags',
+                    value: res.fields.tagsIDs.value.map((id) => dbObj.tags.items[id]),
+                };
+            }
+        }
+
+        return res;
+    };
+
     const createUser = async (password) => {
         const res = await BRIDGE.write('Users', {props: {password}});
 
@@ -212,37 +261,16 @@ const TODO = (() => {
             }
         }
 
-        const flatenedFields = Object.keys(fields).reduce((acc, itemKey) => {
-            return {...acc, [itemKey]: fields[itemKey].value};
-        }, {});
-
-        //TODO: verify inputs
-        const query = {
-            props: flatenedFields,
-        };
-        if (parentType != 'work') {
-            query.props.parent = parentID;
-        }
-
-        const res = await BRIDGE.write(childType + 's', query);
-
-        //- this should be generic - parse fields
-        res.fields.tagsIDs.value = JSON.parse(res.fields.tagsIDs.value);
+        //- find a way to avoid parentType in strustrureQuery
+        let res = restructureResponse(
+            fixTypes(await BRIDGE.write(childType + 's', structureQuery(fields, parentType, parentID)))
+        );
 
         if (res) {
             updateHash(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
             dbObj[res.type].items[res.id] = res;
-
-            // adding tags objects in each item of each component
-            if (res?.fields) {
-                // console.log(res.fields.tagsIDs);
-                dbObj[res.type].items[res.id].fields.tags = {
-                    type: 'tags',
-                    value: res.fields.tagsIDs.value.map((id) => dbObj.tags.items[id]),
-                };
-            }
 
             saveWork();
             return true;
@@ -253,30 +281,32 @@ const TODO = (() => {
 
     const modifyItem = async (itemType, id, modifiedFields) => {
         const itemKeys = Object.keys(modifiedFields);
-        const targetItem = dbObj[itemType].items[id];
+        if (itemKeys.length) {
+            // console.log('modfied', modifiedFields);
+            const targetItem = dbObj[itemType].items[id];
 
-        // check order validity
-        //! not fixed yet
-        //fixItemOrder(isItemOutOfOrder({...targetItem, fields: modifiedFields}, true));
+            // check order validity
+            //! not fixed yet
+            //fixItemOrder(isItemOutOfOrder({...targetItem, fields: modifiedFields}, true));
 
-        //TODO: verify inputs
-        // if (properties.length != itemKeys.length) {
-        //     console.error('the input properties do not match item properties');
-        //     return;
-        // }
-        const query = {filters: {id}, data: {...modifiedFields}};
+            //TODO: verify inputs
+            // if (properties.length != itemKeys.length) {
+            //     console.error('the input properties do not match item properties');
+            //     return;
+            // }
+            const query = {filters: {id}, data: {...modifiedFields}};
 
-        const response = BRIDGE.update(itemType + 's', query);
+            const response = await BRIDGE.update(itemType + 's', query);
 
-        if (response) {
-            itemKeys.forEach((key) => {
-                targetItem.fields[key].value = modifiedFields[key];
-            });
+            if (response) {
+                itemKeys.forEach((key) => {
+                    targetItem.fields[key].value = modifiedFields[key];
+                });
 
-            return true;
+                return true;
+            }
+            return false;
         }
-
-        return false;
     };
 
     //- not tested yet

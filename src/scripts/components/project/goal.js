@@ -14,8 +14,10 @@ import {
 } from '../../imports/tools';
 
 import {SubGoal, Tag} from '../../imports/components';
+import {listTags} from '../shared/sharedUtils';
 
 const Goal = (props) => {
+    // console.log(props.itemObj);
     const [state, setState] = useState(sharedState(props.itemObj));
 
     useEffect(() => {
@@ -43,23 +45,10 @@ const Goal = (props) => {
         },
     };
 
-    let tagsValue = state.itemObj.fields.tags.value;
-    tagsValue = JSON.parse(tagsValue);
     return (
         <div key={state.itemObj.id} className="cards-container">
             {/* goal tags */}
-            <div className="tags">
-                {(() => {
-                    let tagsValue = state.itemObj.fields.tags.value;
-                    return tagsValue.map((tag) => {
-                        return (
-                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                                {tag.text}
-                            </Tag>
-                        );
-                    });
-                })()}
-            </div>
+            {listTags(state.form.fields.self.tags.value, Tag)}
 
             {/* goal header */}
             <div className="cards-container-header">

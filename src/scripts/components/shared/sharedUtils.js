@@ -26,7 +26,6 @@ export const showMenu = (id) => {
 };
 
 export const sharedState = (itemObj) => {
-    // console.log(itemObj);
     return {
         itemObj,
         form: {
@@ -47,10 +46,26 @@ export const sharedState = (itemObj) => {
 
 export const listChildren = (parent, ChildComponent) => {
     // console.log(parent);
-    const childType = TODO.getChildType(parent.type);
 
     const children = TODO.getChildren(parent.type, parent.id);
     return children.map((child) => {
         return <ChildComponent key={child.id} itemObj={child} />;
     });
+};
+
+export const listTags = (tags, TagComponent) => {
+    // console.log(parent);
+    return (
+        <div className="tags">
+            {(() => {
+                return tags.map((tag) => {
+                    return (
+                        <TagComponent key={tag.id} style={{color: tag.fontclr, background: tag.bgclr}}>
+                            {tag.text}
+                        </TagComponent>
+                    );
+                });
+            })()}
+        </div>
+    );
 };

@@ -13,6 +13,7 @@ import {
     bridge,
 } from '../../imports/tools';
 import {Tag} from '../../imports/components';
+import {listTags} from '../shared/sharedUtils';
 
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -43,24 +44,11 @@ const SubGoal = (props) => {
         },
     };
 
-    let tagsValue = state.itemObj.fields.tags.value;
-    tagsValue = JSON.parse(tagsValue);
     return (
         <>
             <div key={state.itemObj.id} style={style.parent} className="card" draggable="true">
                 {/* sub goal tags */}
-                <div className="tags">
-                    {(() => {
-                        let tagsValue = state.itemObj.fields.tags.value;
-                        return tagsValue.map((tag) => {
-                            return (
-                                <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                                    {tag.text}
-                                </Tag>
-                            );
-                        });
-                    })()}
-                </div>
+                {listTags(state.form.fields.self.tags.value, Tag)}
 
                 <p style={style.title}>{state.itemObj.fields.title.value}</p>
 

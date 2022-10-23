@@ -80,13 +80,14 @@ export default function TagsForm(props) {
                         if (tagUsed) {
                             usedTags = [...state.tagsValue];
                         }
+                        // console.log(tag);
                         return (
                             <Tag
                                 data-id={tag.id}
                                 key={tag.id}
                                 style={{
-                                    color: tag.color,
-                                    background: tag.background,
+                                    color: tag.fontclr,
+                                    background: tag.bgclr,
                                     filter: `grayscale(${Number(tagUsed)})`,
                                 }}
                             >

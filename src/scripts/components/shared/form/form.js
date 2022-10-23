@@ -16,6 +16,7 @@ export default function Form(props) {
         subForms: {
             show: '',
             tags: {
+                modified: false,
                 value: [],
             },
         },
@@ -28,30 +29,36 @@ export default function Form(props) {
     };
 
     const subFormAction = (returnedValue, action) => {
-        let tags =
-            state.parentState.form.mode == 'edit'
-                ? state.parentState.form.fields.self
-                : state.parentState.form.fields.child;
-        tags[state.subForms.show].value = returnedValue;
+        // console.log(returnedValue);
 
-        let subFormState = {};
+        const newState = deepClone(state);
+        let fields =
+            newState.parentState.form.mode == 'edit'
+                ? newState.parentState.form.fields.self
+                : newState.parentState.form.fields.child;
 
         if (action == 'submit') {
-            subFormState = {
-                [state.subForms.show]: {
-                    value: returnedValue,
-                },
+            let field = fields[state.subForms.show];
+
+            //- this is not flexible at all, cosider other subforms
+            let identical = false;
+            if (field.value.length) {
+                identical = field.value.every((fieldsTag) =>
+                    returnedValue.some((subFormTag) => subFormTag.id == fieldsTag.id)
+                );
+            } else {
+                identical = !Boolean(returnedValue.length);
+            }
+
+            field.value = returnedValue;
+
+            newState.subForms[newState.subForms.show] = {
+                modified: !identical,
+                value: returnedValue,
             };
         }
 
-        const newState = {
-            ...state,
-            subForms: {
-                ...state.subForms,
-                show: '',
-                ...subFormState,
-            },
-        };
+        newState.subForms.show = '';
 
         // console.log('new state', newState);
         setState(newState);
@@ -129,7 +136,16 @@ export default function Form(props) {
         const fieldsCpy = deepClone(fields);
         Object.keys(fieldsCpy).forEach((fieldKey) => {
             if (fieldKey == 'tags') {
-                fieldsCpy.tagsIDs = {type: 'tags', value: fieldsCpy[fieldKey].value.map((tag) => tag.id)};
+                // console.log(fieldsCpy[fieldKey]);
+                if (fieldsCpy[fieldKey]?.value) {
+                    fieldsCpy.tagsIDs = {
+                        type: 'tagsIDs',
+                        value: fieldsCpy[fieldKey].value.map((tag) => tag.id),
+                    };
+                } else {
+                    // console.log(fieldsCpy);
+                    fieldsCpy.tagsIDs = fieldsCpy[fieldKey].map((tag) => tag.id);
+                }
                 delete fieldsCpy[fieldKey];
             }
         });
@@ -169,23 +185,23 @@ export default function Form(props) {
             //! AN AWFUL WAY TO DO THIS
             // set all inputs
             const modifiedFields = {};
-            [...document.querySelector('.fields').children].forEach((field) => {
-                const name = field.getAttribute('name');
-                const type = field.getAttribute('data-type');
+            [...document.querySelector('.fields').children].forEach((DOMField) => {
+                const name = DOMField.getAttribute('name');
+                const type = DOMField.getAttribute('data-type');
+
                 if (type == 'tags') {
-                    let fieldValue = fields[name].value;
-                    let subFormFieldValue = state.subForms[type];
-                    //- check for arrays change
-                    //- get IDs instead of the whole arr of objs
-                    modifiedFields[name] = subFormFieldValue.value;
-                    fieldValue = modifiedFields[name];
-                } else {
-                    let fieldValue = fields[name];
-                    let domFieldValue = field.children[0];
-                    if (fieldValue != domFieldValue) {
-                        modifiedFields[name] = domFieldValue.value;
+                    let subForm = state.subForms[type];
+
+                    if (state.subForms[type].modified) {
+                        modifiedFields[name] = subForm.value;
+                        fields[name].value = subForm.value;
                     }
-                    fieldValue.value = domFieldValue.value;
+                } else {
+                    let domFieldValue = DOMField.children[0].value;
+                    if (fields[name].value != domFieldValue) {
+                        modifiedFields[name] = domFieldValue;
+                        fields[name].value = domFieldValue;
+                    }
                 }
             });
 
@@ -196,6 +212,7 @@ export default function Form(props) {
             if (action == FORM_MODE.create) {
                 //- blindly passing properties over to the factory function
                 // console.log(fields);
+                // console.log(newState.form.fields.child.tags);
                 const response = await TODO.createItem(itemType, itemID, parseFields(fields));
                 if (response) {
                     newState = deepClone(state.parentState);
@@ -208,6 +225,7 @@ export default function Form(props) {
             }
         }
 
+        // console.log(newState);
         newState.form.show = false;
         bridgeState(props.id, newState);
     };
@@ -217,29 +235,32 @@ export default function Form(props) {
             state.parentState.form.mode == 'edit'
                 ? state.parentState.form.fields.self
                 : state.parentState.form.fields.child;
-        // console.log('form', state.parentState.form);
+
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
-            // console.log('field', field);
-            if (fieldKey == 'tags') {
-                return (
-                    <div name={field.type} data-type={field.type} key={field.type}>
-                        <button
-                            key={fieldKey}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                showSubForm(field.type, field.value);
-                            }}
-                        >
-                            Add Tags
-                        </button>
-                        {field.value.map((tag) => {
-                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                                {tag.text}
-                            </Tag>;
-                        })}
-                    </div>
-                );
+            if (field.type == 'tags') {
+                //- to make sure I don't show tagsIDs in the form
+
+                if (fieldKey == 'tags') {
+                    return (
+                        <div name={field.type} data-type={field.type} key={fieldKey}>
+                            <button
+                                key={fieldKey}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    showSubForm(field.type, field.value);
+                                }}
+                            >
+                                Add Tags
+                            </button>
+                            {field.value.map((tag) => (
+                                <Tag style={{color: tag.fontclr, background: tag.bgclr}}>{tag.text}</Tag>
+                            ))}
+                        </div>
+                    );
+                }
+
+                return <></>;
             } else if (field.type == 'priority') {
                 // return (
                 //     <label key={fieldKey} name={fieldKey} data-type={field.type}>
@@ -287,6 +308,7 @@ export default function Form(props) {
                             style={style.pannel.buttons.button}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 formAction(state.parentState.form.mode, e);
                             }}
                         >
@@ -296,6 +318,7 @@ export default function Form(props) {
                             style={style.pannel.buttons.button}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                e.preventDefault();
                                 formAction(FORM_MODE.cancel, e);
                             }}
                         >
@@ -308,6 +331,7 @@ export default function Form(props) {
                                 style={style.pannel.buttons.button}
                                 onClick={(e) => {
                                     e.stopPropagation();
+                                    e.preventDefault();
                                     formAction(FORM_MODE.delete, e);
                                 }}
                             >

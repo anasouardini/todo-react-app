@@ -3,9 +3,13 @@ const htmlWebpackPlugin = require('html-webpack-plugin');
 const {Hash} = require('react-router-dom');
 // const eslintWebpackPlugin = require('eslint-webpack-plugin');
 
+require('dotenv').config();
+const MODE = process.env.MODE;
+console.log(MODE);
+
 //todo: postcss(autoprefixer), watchers
 module.exports = {
-    mode: 'development',
+    mode: MODE,
     // mode: 'production',
     entry: {
         app: path.resolve(__dirname, 'src/scripts/index.js'),
@@ -21,7 +25,7 @@ module.exports = {
     //     extensions: ['.tsx', '.ts', '.js', '.jsx'],
     // },
 
-    devtool: 'source-map',
+    devtool: MODE == 'development' ? 'source-map' : false,
     module: {
         rules: [
             {
@@ -71,16 +75,28 @@ module.exports = {
             },
         ],
     },
-    plugins: [
-        new htmlWebpackPlugin({
-            title: 'TODO',
-            filename: 'index.html',
-            template: 'src/template.html',
-            inject: false,
-            // hash: true
-        }),
-        // new eslintWebpackPlugin(),
-    ],
+    plugins:
+        MODE == 'development'
+            ? [
+                  new htmlWebpackPlugin({
+                      title: 'TODO dev',
+                      filename: 'index.html',
+                      template: 'src/template.html',
+                      inject: false,
+                      // hash: true
+                  }),
+                  // new eslintWebpackPlugin(),
+              ]
+            : [
+                  new htmlWebpackPlugin({
+                      title: 'TODO prod',
+                      filename: 'index.html',
+                      template: 'src/template.html',
+                      inject: false,
+                      // hash: true
+                  }),
+              ],
+
     devServer: {
         // magicHtml: false,
         // historyApiFallback: true,

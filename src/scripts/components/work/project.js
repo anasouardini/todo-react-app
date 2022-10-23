@@ -12,6 +12,7 @@ import {
     initBridge,
 } from '../../imports/tools';
 import {Tag} from '../../imports/components';
+import {listTags} from '../shared/sharedUtils';
 
 export default function Project(props) {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -19,6 +20,7 @@ export default function Project(props) {
     useEffect(() => {
         initBridge(state.itemObj.id, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
+            // console.log(newStateCpy);
             setState({
                 ...newStateCpy,
                 itemObj: props.itemObj,
@@ -47,19 +49,7 @@ export default function Project(props) {
     return (
         <div style={style.project}>
             {/* project tags */}
-            <div className="tags">
-                {(() => {
-                    let tagsValue = state.itemObj.fields.tags.value;
-                    console.log(state.itemObj.fields);
-                    return tagsValue.map((tag) => {
-                        return (
-                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                                {tag.text}
-                            </Tag>
-                        );
-                    });
-                })()}
-            </div>
+            {listTags(state.form.fields.self.tags.value, Tag)}
 
             <h3 style={{paddingRight: '25px'}}>
                 <Link to={`/project/${state.itemObj.id}`}>{state.itemObj.fields.title.value}</Link>
