@@ -25,7 +25,7 @@ export default function Work(props) {
                 ...newStateCpy,
                 itemObj: TODO.getWork(),
             });
-            console.log(newState);
+            // console.log(newState);
         });
     }, []);
 

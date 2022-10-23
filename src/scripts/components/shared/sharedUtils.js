@@ -35,8 +35,8 @@ export const sharedState = (itemObj) => {
             title: 'form',
             submit: '',
             fields: {
-                self: deepClone(itemObj.fields), //work doesn't have a fields prop
-                child: deepClone(TODO.itemsFallback.getChildFields(itemObj.type)),
+                self: deepClone(itemObj?.fields), //work doesn't have a fields prop
+                child: deepClone(TODO.itemsFallback.getChildFields(itemObj?.type)),
             },
         },
         menu: {
@@ -46,9 +46,8 @@ export const sharedState = (itemObj) => {
 };
 
 export const listChildren = (parent, ChildComponent) => {
-    // console.log(parent);
-    // return <></>;
-    // TODO.dbObj[parent.type].typeDe.child // trying to get child component tag name implicitly
+    const childType = TODO.getChildType(parent.type);
+
     const children = TODO.getChildren(parent.type, parent.id);
     return children.map((child) => {
         return <ChildComponent key={child.id} itemObj={child} />;

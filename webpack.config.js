@@ -17,14 +17,9 @@ module.exports = {
         clean: true,
         assetModuleFilename: 'assets/images/[name]_[hash][ext]',
     },
-    resolve: {
-        alias: {
-            root: path.resolve(__dirname, 'src/scripts/'),
-            components: path.resolve(__dirname, 'src/scripts/components'),
-            pages: path.resolve(__dirname, 'src/scripts/pages'),
-            imports: path.resolve(__dirname, 'src/scripts/imports/'),
-        },
-    },
+    // resolve: {
+    //     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    // },
 
     devtool: 'source-map',
     module: {
@@ -61,7 +56,7 @@ module.exports = {
                 type: 'asset',
             },
             {
-                test: /\.js$/i,
+                test: /\.(js|ts)x?$/i,
                 exclude: /node_modules/,
                 use: {
                     loader: 'babel-loader',
@@ -69,6 +64,7 @@ module.exports = {
                         presets: [
                             ['@babel/preset-env', {targets: 'defaults'}],
                             ['@babel/preset-react', {targets: 'defaults'}],
+                            // ['@babel/preset-typescript', {targets: 'defaults'}],
                         ],
                     },
                 },

@@ -125,7 +125,7 @@ export default function Form(props) {
         },
     };
 
-    const formAction = (action, e) => {
+    const formAction = async (action, e) => {
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
         }
@@ -158,8 +158,8 @@ export default function Form(props) {
 
             if (action == FORM_MODE.create) {
                 //- blindly passing properties over to the factory function
-                TODO.create(
-                    state.parentState.itemObj.childType,
+                const res = await TODO.create(
+                    state.parentState.itemObj.type,
                     state.parentState.itemObj.id,
                     deepClone(form.fields.child)
                 );
@@ -168,7 +168,7 @@ export default function Form(props) {
             }
 
             //! this step could be removed
-            state.parentState.form.fields = deepClone(form.fields.self);
+            state.parentState.form.fields.self = deepClone(form.fields.self);
         }
 
         state.parentState.form.show = false;

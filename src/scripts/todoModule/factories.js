@@ -65,39 +65,39 @@ const factories = (() => {
         },
     };
 
-    const defaultAttr = (type, childType = null, children = null) => {
-        return {type, childType, children};
-    };
-
-    const workflow = (ID, fields) => {
+    const workflow = (ID, fields, parentID) => {
         //TODO: constraint API
-        return {ID, fields, ...defaultAttr('workflow', 'project', {})};
+        return {ID, fields, type: 'workflow'};
+        parentID;
     };
 
-    const project = (ID, fields) => {
+    const project = (ID, fields, parentID) => {
         //TODO: constraint API
         return {
             ID,
             fields,
-            ...defaultAttr('project', 'goal', {}),
+            type: 'project',
+            parentID,
         };
     };
 
-    let goal = function (ID, fields) {
+    let goal = (ID, fields, parentID) => {
         //TODO: constraint API
         return {
             ID,
             fields,
-            ...defaultAttr('goal', 'subgoal', {}),
+            type: 'goal',
+            parentID,
         };
     };
 
-    const subgoal = (ID, fields) => {
+    const subgoal = (ID, fields, parentID) => {
         //TODO: constraint API
         return {
             ID,
             fields,
-            ...defaultAttr('subgoal', null, null),
+            type: 'subgoal',
+            parentID,
         };
     };
 

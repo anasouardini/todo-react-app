@@ -20,6 +20,7 @@ const Goal = (props) => {
 
     useEffect(() => {
         initBridge(state.itemObj.id, state, (newState = undefined) => {
+            // console.log('rerendring', newState);
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,

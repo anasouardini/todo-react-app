@@ -48,13 +48,13 @@ export default function Project(props) {
     return (
         <div style={style.project}>
             {/* project tags */}
-            {/* <div className="tags">
+            <div className="tags">
                 {state.itemObj.fields.tags.value.map((tag) => (
                     <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                         {tag.text}
                     </Tag>
                 ))}
-            </div> */}
+            </div>
 
             <h3 style={{paddingRight: '25px'}}>
                 <Link to={`/project/${state.itemObj.id}`}>{state.itemObj.fields.title.value}</Link>
