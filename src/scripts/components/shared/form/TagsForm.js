@@ -4,7 +4,7 @@ import {Tag} from '../../../imports/components';
 export default function TagsForm(props) {
     const [state, setState] = useState({
         tagsValue: deepClone(props.fieldValue),
-        availTags: deepClone(TODO.tags.list),
+        availTags: deepClone(Object.values(TODO.dbObj.tags.items)),
     });
 
     const style = {
@@ -51,7 +51,7 @@ export default function TagsForm(props) {
         e.stopPropagation();
 
         if (!usedTags.some((usedTag) => usedTag.id == ID)) {
-            usedTags.push(state.availTags.filter((availTag) => availTag.id == ID)[0]);
+            usedTags.push(Object.values(state.availTags).filter((availTag) => availTag.id == ID)[0]);
         } else {
             usedTags = usedTags.filter((usedTag) => usedTag.id != ID);
         }
@@ -74,8 +74,8 @@ export default function TagsForm(props) {
             <div style={style.parent} id="availableTags">
                 {/* fieldValue: array of tags */}
 
-                {state.availTags.length ? (
-                    state.availTags.map((tag, index) => {
+                {Object.values(state.availTags).length ? (
+                    Object.values(state.availTags).map((tag, index) => {
                         const tagUsed = state.tagsValue.some((usedTag) => usedTag.id == tag.id);
                         if (tagUsed) {
                             usedTags = [...state.tagsValue];

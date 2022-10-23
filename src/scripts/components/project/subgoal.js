@@ -42,16 +42,24 @@ const SubGoal = (props) => {
             },
         },
     };
+
+    let tagsValue = state.itemObj.fields.tags.value;
+    tagsValue = JSON.parse(tagsValue);
     return (
         <>
             <div key={state.itemObj.id} style={style.parent} className="card" draggable="true">
                 {/* sub goal tags */}
                 <div className="tags">
-                    {state.itemObj.fields.tags.value.map((tag) => (
-                        <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                            {tag.text}
-                        </Tag>
-                    ))}
+                    {(() => {
+                        let tagsValue = state.itemObj.fields.tags.value;
+                        return tagsValue.map((tag) => {
+                            return (
+                                <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
+                                    {tag.text}
+                                </Tag>
+                            );
+                        });
+                    })()}
                 </div>
 
                 <p style={style.title}>{state.itemObj.fields.title.value}</p>

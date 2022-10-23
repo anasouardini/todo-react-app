@@ -3,65 +3,10 @@ import factories from './factories';
 import BRIDGE from '../bridge/bridge';
 
 const TODO = (() => {
-    const tags = {
-        list: [
-            {
-                ID: '234578656',
-                background: '#27ae60',
-                color: '#fff',
-                text: 'Not Done',
-            },
-            {
-                ID: '754523452',
-                background: '#d35400',
-                color: '#fff',
-                text: 'In Progress',
-            },
-            {
-                ID: '874563423',
-                background: '#2c3e50',
-                color: '#fff',
-                text: 'Done',
-            },
-        ],
-        // createTag: (background, color, text) => {
-        //     this.list.push({background, color, text});
-        // },
-        // deleteTag: (index) => {
-        //     this.list.splice(index, 1);
-        // },
-    };
-
-    const priorities = {
-        list: [
-            {
-                background: '#2c3e50',
-                color: '#fff',
-                text: '0',
-            },
-            {
-                background: '#2c3e50',
-                color: '#fff',
-                text: '1',
-            },
-            {
-                background: '#2c3e50',
-                color: '#fff',
-                text: '2',
-            },
-        ],
-        // createpriority: (background, color, text) => {
-        //     this.list.push({background, color, text});
-        // },
-        // deletepriority: (index) => {
-        //     this.list.splice(index);
-        // },
-    };
-
     const dbObj = {
         hash: '',
         work: {
-            items: {},
+            items: {dummy: {type: 'work', id: 'dummy', childrenIDs: []}},
             typeDe: {
                 parent: null,
                 self: 'work',
@@ -104,6 +49,14 @@ const TODO = (() => {
                 child: null,
             },
         },
+
+        tags: {
+            items: {},
+        },
+
+        priorities: {
+            items: {},
+        },
     };
 
     const saveWork = () => {
@@ -111,7 +64,7 @@ const TODO = (() => {
     };
 
     const getWork = () => {
-        return dbObj.work.items.dummy;
+        return dbObj.work.items?.dummy;
     };
 
     const getItem = (itemType, id) => {
@@ -122,16 +75,17 @@ const TODO = (() => {
     const getParent = (itemType, id) => {
         const parentType = dbObj[itemType].typeDe.parent;
         const parentID = dbObj[itemType].items[id].parentID;
+        // console.log(parentType, parentID);
         return dbObj[parentType].items[parentID];
     };
 
     const getParentID = (type, id) => {
-        console.log(dbObj[type].items);
+        // console.log(dbObj[type].items);
         return dbObj[type].items[id].parentID;
     };
 
     const getChildren = (itemType, itemID) => {
-        // console.log(dbObj[dbObj[itemType].typeDe.child]);
+        // console.log(dbObj[itemType].items[itemID]);
         const children = [];
         dbObj[itemType].items[itemID].childrenIDs.forEach((childID) => {
             children.push(dbObj[dbObj[itemType].typeDe.child].items[childID]);
@@ -152,12 +106,28 @@ const TODO = (() => {
         await BRIDGE.sync();
 
         const chachedWork = JSON.parse(localStorage.getItem('dbObj'));
+        // console.log(typeof chachedWork);
         if (chachedWork) {
             objMerge(dbObj, chachedWork);
         }
         console.log('dbObj', dbObj);
         // console.log('cache', chachedWork);
 
+        // adapting tags list with the front-end
+        [dbObj.project, dbObj.goal, dbObj.subgoal].forEach((component) => {
+            Object.values(component.items).forEach((item) => {
+                if (item?.fields) {
+                    // console.log(item.fields.tagsIDs.value);
+                    item.fields.tags = {
+                        type: 'tags',
+                        value: item.fields.tagsIDs.value.map((id) => {
+                            TODO.tags.item[id];
+                        }),
+                    };
+                }
+            });
+        });
+        // console.log(dbObj.project.items);
         reactRenderCb();
     };
 
@@ -206,12 +176,28 @@ const TODO = (() => {
         console.log('FIXING out of order');
     };
 
-    const updateHahsh = (res) => {
+    const updateHash = (res) => {
         dbObj.hash = res.hash;
         delete res.hash;
     };
 
     //ACTIONS
+    const createUser = async (password) => {
+        const res = await BRIDGE.write('Users', {props: {password}});
+
+        if (res) {
+            updateHash(res);
+
+            dbObj[parentType].items[parentID].childrenIDs.push(res.id);
+            dbObj[res.type].items[res.id] = res;
+
+            saveWork();
+            return true;
+        }
+
+        return false;
+    };
+
     const createItem = async (parentType, parentID, fields) => {
         const childType = getChildType(parentType);
 
@@ -233,12 +219,17 @@ const TODO = (() => {
         }, {});
 
         //TODO: verify inputs
-        const res = await BRIDGE.write(childType + 's', {
-            props: {...flatenedFields, parent: parentID, type: childType},
-        });
+        const query = {
+            props: flatenedFields,
+        };
+        if (parentType != 'work') {
+            query.props.parent = parentID;
+        }
+
+        const res = await BRIDGE.write(childType + 's', query);
 
         if (res) {
-            updateHahsh(res);
+            updateHash(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
             dbObj[res.type].items[res.id] = res;
@@ -250,34 +241,53 @@ const TODO = (() => {
         return false;
     };
 
-    const modifyItem = (itemType, ID, newFields) => {
-        const itemKeys = Object.keys(newFields);
-        const targetItem = dbObj[itemType].items[ID];
+    const modifyItem = async (itemType, id, modifiedFields) => {
+        const itemKeys = Object.keys(modifiedFields);
+        const targetItem = dbObj[itemType].items[id];
 
         // check order validity
         //! not fixed yet
-        //fixItemOrder(isItemOutOfOrder({...targetItem, fields: newFields}, true));
+        //fixItemOrder(isItemOutOfOrder({...targetItem, fields: modifiedFields}, true));
 
         //TODO: verify inputs
         // if (properties.length != itemKeys.length) {
         //     console.error('the input properties do not match item properties');
         //     return;
         // }
+        const query = {filters: {id}, data: {...modifiedFields}};
 
-        itemKeys.forEach((key) => {
-            targetItem.fields[key] = newFields[key];
-        });
+        const response = BRIDGE.update(itemType + 's', query);
+
+        if (response) {
+            itemKeys.forEach((key) => {
+                targetItem.fields[key].value = modifiedFields[key];
+            });
+
+            return true;
+        }
+
+        return false;
     };
 
-    const moveItem = (itemID, newParentID) => {
-        console.log('not implemented for now');
+    //- not tested yet
+    const moveItem = async (itemType, itemID, newParentID) => {
+        const response = await modifyItem(itemType, itemID, {parent: newParentID});
+
+        if (response) {
+            getParent(itemType, itemID).childrenIDs.splice(childrenIDs.indexOf(itemID));
+            dbObj[dbObj[itemType].typeDe.parent].items[newParentID].childrenIDs.push(itemID);
+            return true;
+        }
+
+        return false;
     };
 
     const deleteItem = async (itemType, itemID) => {
         const res = await BRIDGE.remove(itemType + 's', {filters: {id: itemID}});
         if (res) {
-            updateHahsh(res);
+            updateHash(res);
 
+            // console.log(itemType, itemID);
             const parentChildrenIDs = getParent(itemType, itemID).childrenIDs;
             const itemIDIndex = parentChildrenIDs.indexOf(itemID);
 
@@ -292,11 +302,10 @@ const TODO = (() => {
 
     //EXPORTS
     return {
+        dbObj,
         itemsFallback: factories.fallback,
         createItem,
         modifyItem,
-        tags,
-        priorities,
         getItem,
         getParent,
         getParentID,
@@ -307,6 +316,9 @@ const TODO = (() => {
         loadSavedWork,
         burnWork,
         getWork,
+
+        //- temporary
+        createUser,
     };
 })();
 

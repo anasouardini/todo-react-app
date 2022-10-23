@@ -46,6 +46,7 @@ export const sharedState = (itemObj) => {
 };
 
 export const listChildren = (parent, ChildComponent) => {
+    // console.log(parent);
     const childType = TODO.getChildType(parent.type);
 
     const children = TODO.getChildren(parent.type, parent.id);

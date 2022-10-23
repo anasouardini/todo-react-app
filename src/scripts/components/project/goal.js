@@ -42,15 +42,23 @@ const Goal = (props) => {
             },
         },
     };
+
+    let tagsValue = state.itemObj.fields.tags.value;
+    tagsValue = JSON.parse(tagsValue);
     return (
         <div key={state.itemObj.id} className="cards-container">
             {/* goal tags */}
             <div className="tags">
-                {state.itemObj.fields.tags.value.map((tag) => (
-                    <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                        {tag.text}
-                    </Tag>
-                ))}
+                {(() => {
+                    let tagsValue = state.itemObj.fields.tags.value;
+                    return tagsValue.map((tag) => {
+                        return (
+                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
+                                {tag.text}
+                            </Tag>
+                        );
+                    });
+                })()}
             </div>
 
             {/* goal header */}

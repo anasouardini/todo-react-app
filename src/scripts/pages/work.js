@@ -16,7 +16,7 @@ import {Workflow} from '../imports/components';
 
 export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork()));
-    // console.log(state.itemObj.children);
+    // console.log(TODO.getWork());
 
     useEffect(() => {
         initBridge(state.itemObj.id, state, (newState) => {

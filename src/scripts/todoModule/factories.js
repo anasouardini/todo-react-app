@@ -7,42 +7,38 @@ const factories = (() => {
             value: 'new item title',
         },
 
-        order: {
-            type: 'number',
-            value: 'auto',
+        desc: {
+            type: 'text',
+            value: 'description goes here',
         },
-        priority: {
-            type: 'priority',
-            value: {
-                text: '0',
-                color: '#000',
-                backgound: '#bada55',
-            },
+        notes: {
+            type: 'text',
+            value: 'nothing to note',
         },
     };
 
     const sharedFallbakProps = {
         ...sharedFallbakProps_strong,
+        priority: {
+            type: 'priority',
+            value: 0,
+        },
+        order: {
+            type: 'number',
+            value: 'auto',
+        },
         tags: {
             type: 'tags',
             value: [],
         },
-        style: {
-            type: 'text',
-            value: 'color: red;',
-        },
+        // style: {
+        //     type: 'text',
+        //     value: 'color: red;',
+        // },
 
-        desc: {
-            type: 'text',
-            value: 'description goes here',
-        },
         dueDate: {
             type: 'text',
-            value: 'undetermined',
-        },
-        notes: {
-            type: 'text',
-            value: 'nothing to note',
+            value: '9999-99-99 09:09:09',
         },
     };
 

@@ -16,6 +16,9 @@ document.body.appendChild(root_DOM);
 // create the rool virtual element
 const root = createRoot(document.querySelector('#root'));
 
+// temporarely fix
+// TODO.createUser('passhash');
+
 //checking updates and loading localstorage; asyncronously
 TODO.loadSavedWork(() => {
     root.render(

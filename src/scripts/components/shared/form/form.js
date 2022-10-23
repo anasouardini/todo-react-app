@@ -130,7 +130,9 @@ export default function Form(props) {
             return;
         }
 
-        const form = state.parentState.form;
+        let newState = deepClone(state.parentState); // clone the old state
+
+        const form = deepClone(state.parentState.form);
         let fields = undefined;
         if (action == FORM_MODE.edit) {
             fields = form.fields.self;
@@ -138,46 +140,69 @@ export default function Form(props) {
             fields = form.fields.child;
         } else if (action == FORM_MODE.delete) {
             const parentID = TODO.getParentID(state.parentState.itemObj.type, state.parentState.itemObj.id);
-            await TODO.deleteItem(state.parentState.itemObj.type, state.parentState.itemObj.id);
+            const response = await TODO.deleteItem(
+                state.parentState.itemObj.type,
+                state.parentState.itemObj.id
+            );
 
-            state.parentState.form.show = false;
-            bridgeState(props.id, state.parentState);
+            if (response) {
+                state.parentState.form.show = false;
+                bridgeState(props.id, state.parentState);
 
-            bridge[parentID].render(); //no args means no state mutation
-            // return;
+                bridge[parentID].render(); //no args means no state mutation
+                newState = deepClone(state.parentState);
+            }
         }
 
         if (fields) {
             //! AN AWFUL WAY TO DO THIS
-            //set all inputs
+            // set all inputs
+            const modifiedFields = {};
             [...document.querySelector('.fields').children].forEach((field) => {
                 const name = field.getAttribute('name');
                 const type = field.getAttribute('data-type');
                 if (type == 'tags') {
-                    fields[name].value = state.subForms[type].value;
+                    let fieldValue = fields[name].value;
+                    let subFormFieldValue = state.subForms[type];
+                    if (typeof subFormFieldValue != 'object') {
+                        if (fieldValue != subFormFieldValue) {
+                            modifiedFields[name] = subFormFieldValue.value;
+                        }
+                        fieldValue = subFormFieldValue.value;
+                    } else {
+                        //- check for arrays change
+                        modifiedFields[name] = subFormFieldValue.value;
+                        fieldValue = modifiedFields[name];
+                    }
                 } else {
-                    fields[name].value = field.children[0].value;
+                    let fieldValue = fields[name];
+                    let domFieldValue = field.children[0];
+                    if (fieldValue != domFieldValue) {
+                        modifiedFields[name] = domFieldValue.value;
+                    }
+                    fieldValue.value = domFieldValue.value;
                 }
             });
 
+            const itemType = state.parentState.itemObj.type;
+            const itemID = state.parentState.itemObj.id;
             if (action == FORM_MODE.create) {
                 //- blindly passing properties over to the factory function
-                await TODO.createItem(
-                    state.parentState.itemObj.type,
-                    state.parentState.itemObj.id,
-                    deepClone(form.fields.child)
-                );
+                // console.log(fields);
+                const response = await TODO.createItem(itemType, itemID, fields);
+                if (response) {
+                    newState = deepClone(state.parentState);
+                }
             } else if (action == FORM_MODE.edit) {
-                TODO.modifyItem(state.parentState.itemObj.id, form.fields.self);
+                const response = await TODO.modifyItem(itemType, itemID, modifiedFields);
+                if (response) {
+                    newState = deepClone(state.parentState);
+                }
             }
-
-            //! this step could be removed
-            state.parentState.form.fields.self = deepClone(form.fields.self);
         }
 
-        state.parentState.form.show = false;
-
-        bridgeState(props.id, state.parentState);
+        newState.form.show = false;
+        bridgeState(props.id, newState);
     };
 
     const listFields = () => {
@@ -201,26 +226,28 @@ export default function Form(props) {
                         >
                             Add Tags
                         </button>
-                        {field.value.map((tag) => (
+                        {field.value.map((tag) => {
                             <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
                                 {tag.text}
-                            </Tag>
-                        ))}
+                            </Tag>;
+                        })}
                     </div>
                 );
             } else if (field.type == 'priority') {
-                return (
-                    <label key={fieldKey} name={fieldKey} data-type={field.type}>
-                        {fieldKey}
-                        <select defaultValue={field.value} style={style.pannel.inputs.field}>
-                            {TODO.priorities.list.map((pri) => (
-                                <option key={pri.text} value={pri.text}>
-                                    {pri.text}
-                                </option>
-                            ))}
-                        </select>
-                    </label>
-                );
+                // return (
+                //     <label key={fieldKey} name={fieldKey} data-type={field.type}>
+                //         {fieldKey}
+                //         <select defaultValue={field.value} style={style.pannel.inputs.field}>
+                //             {TODO.priorities.list.map((pri) => (
+                //                 <option key={pri.text} value={pri.text}>
+                //                     {pri.text}
+                //                 </option>
+                //             ))}
+                //         </select>
+                //     </label>
+                // );
+            } else if (field.type == 'tagsIDs') {
+                return <></>;
             } else {
                 return (
                     <label key={fieldKey} name={fieldKey} data-type={field.type}>

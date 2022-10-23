@@ -1,6 +1,7 @@
 const merger = (state, newState) => {
     Object.keys(newState).forEach((key) => {
-        if (typeof newState[key] != 'object') {
+        //* OR NULL because JS is a shitty lang
+        if (typeof newState[key] != 'object' || newState[key] == null) {
             state[key] = newState[key];
         } else {
             if (!state.hasOwnProperty(key) || typeof state[key] != typeof newState[key]) {

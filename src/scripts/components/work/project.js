@@ -44,16 +44,21 @@ export default function Project(props) {
             },
         },
     };
-
     return (
         <div style={style.project}>
             {/* project tags */}
             <div className="tags">
-                {state.itemObj.fields.tags.value.map((tag) => (
-                    <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
-                        {tag.text}
-                    </Tag>
-                ))}
+                {(() => {
+                    let tagsValue = state.itemObj.fields.tags.value;
+                    console.log(state.itemObj.fields);
+                    return tagsValue.map((tag) => {
+                        return (
+                            <Tag key={tag.id} style={{color: tag.color, background: tag.background}}>
+                                {tag.text}
+                            </Tag>
+                        );
+                    });
+                })()}
             </div>
 
             <h3 style={{paddingRight: '25px'}}>
