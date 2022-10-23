@@ -113,16 +113,14 @@ const TODO = (() => {
         console.log('dbObj', dbObj);
         // console.log('cache', chachedWork);
 
-        // adapting tags list with the front-end
+        // adding tags objects in each item of each component
         [dbObj.project, dbObj.goal, dbObj.subgoal].forEach((component) => {
             Object.values(component.items).forEach((item) => {
                 if (item?.fields) {
                     // console.log(item.fields.tagsIDs.value);
                     item.fields.tags = {
                         type: 'tags',
-                        value: item.fields.tagsIDs.value.map((id) => {
-                            TODO.tags.item[id];
-                        }),
+                        value: item.fields.tagsIDs.value.map((id) => dbObj.tags.items[id]),
                     };
                 }
             });
@@ -228,11 +226,23 @@ const TODO = (() => {
 
         const res = await BRIDGE.write(childType + 's', query);
 
+        //- this should be generic - parse fields
+        res.fields.tagsIDs.value = JSON.parse(res.fields.tagsIDs.value);
+
         if (res) {
             updateHash(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
             dbObj[res.type].items[res.id] = res;
+
+            // adding tags objects in each item of each component
+            if (res?.fields) {
+                // console.log(res.fields.tagsIDs);
+                dbObj[res.type].items[res.id].fields.tags = {
+                    type: 'tags',
+                    value: res.fields.tagsIDs.value.map((id) => dbObj.tags.items[id]),
+                };
+            }
 
             saveWork();
             return true;

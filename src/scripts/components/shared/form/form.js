@@ -125,6 +125,17 @@ export default function Form(props) {
         },
     };
 
+    const parseFields = (fields) => {
+        const fieldsCpy = deepClone(fields);
+        Object.keys(fieldsCpy).forEach((fieldKey) => {
+            if (fieldKey == 'tags') {
+                fieldsCpy.tagsIDs = {type: 'tags', value: fieldsCpy[fieldKey].value.map((tag) => tag.id)};
+                delete fieldsCpy[fieldKey];
+            }
+        });
+        return fieldsCpy;
+    };
+
     const formAction = async (action, e) => {
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
@@ -164,16 +175,10 @@ export default function Form(props) {
                 if (type == 'tags') {
                     let fieldValue = fields[name].value;
                     let subFormFieldValue = state.subForms[type];
-                    if (typeof subFormFieldValue != 'object') {
-                        if (fieldValue != subFormFieldValue) {
-                            modifiedFields[name] = subFormFieldValue.value;
-                        }
-                        fieldValue = subFormFieldValue.value;
-                    } else {
-                        //- check for arrays change
-                        modifiedFields[name] = subFormFieldValue.value;
-                        fieldValue = modifiedFields[name];
-                    }
+                    //- check for arrays change
+                    //- get IDs instead of the whole arr of objs
+                    modifiedFields[name] = subFormFieldValue.value;
+                    fieldValue = modifiedFields[name];
                 } else {
                     let fieldValue = fields[name];
                     let domFieldValue = field.children[0];
@@ -184,17 +189,19 @@ export default function Form(props) {
                 }
             });
 
+            // console.log('test', parseFields(fields));
+
             const itemType = state.parentState.itemObj.type;
             const itemID = state.parentState.itemObj.id;
             if (action == FORM_MODE.create) {
                 //- blindly passing properties over to the factory function
                 // console.log(fields);
-                const response = await TODO.createItem(itemType, itemID, fields);
+                const response = await TODO.createItem(itemType, itemID, parseFields(fields));
                 if (response) {
                     newState = deepClone(state.parentState);
                 }
             } else if (action == FORM_MODE.edit) {
-                const response = await TODO.modifyItem(itemType, itemID, modifiedFields);
+                const response = await TODO.modifyItem(itemType, itemID, parseFields(modifiedFields));
                 if (response) {
                     newState = deepClone(state.parentState);
                 }
@@ -214,7 +221,7 @@ export default function Form(props) {
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
             // console.log('field', field);
-            if (field.type == 'tags') {
+            if (fieldKey == 'tags') {
                 return (
                     <div name={field.type} data-type={field.type} key={field.type}>
                         <button
@@ -246,8 +253,6 @@ export default function Form(props) {
                 //         </select>
                 //     </label>
                 // );
-            } else if (field.type == 'tagsIDs') {
-                return <></>;
             } else {
                 return (
                     <label key={fieldKey} name={fieldKey} data-type={field.type}>
