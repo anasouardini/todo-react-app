@@ -7,7 +7,7 @@ import Workflow from '../components/work/workflow';
 import Form from '../components/shared/form/form';
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../components/shared/sharedState';
+import sharedState, {sharedRenerer} from '../components/shared/sharedState';
 
 export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork()));
@@ -19,7 +19,15 @@ export default function Work(props) {
         },
     };
 
-    const childrenList = () =>
+    const forceRending = () => {
+        setState({
+            ...state,
+            itemObj: TODO.getWork(),
+        });
+    };
+    sharedRenerer.run = forceRending; //shared reference
+
+    const listChildren = () =>
         Object.keys(state.itemObj.children).map((childKey) => {
             const child = state.itemObj.children[childKey];
             return <Workflow key={child.ID} itemObj={child} />;
@@ -31,7 +39,7 @@ export default function Work(props) {
                 New Workflow
             </button>
 
-            <div>{childrenList()}</div>
+            <div>{listChildren()}</div>
 
             {/* Form */}
             {state.form.show ? (

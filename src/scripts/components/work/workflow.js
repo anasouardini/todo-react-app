@@ -1,12 +1,10 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Project from './project';
 
 import Form from '../shared/form/form';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../shared/sharedState';
-
-import TODO from '../../todoModule';
+import sharedState, {sharedRenerer} from '../shared/sharedState';
 
 export default function Workflow(props) {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -44,7 +42,7 @@ export default function Workflow(props) {
         },
     };
 
-    const childrenList = () =>
+    const listChildren = () =>
         Object.keys(state.itemObj.children).map((childKey) => {
             const child = state.itemObj.children[childKey]; //child is project
             return <Project key={child.ID} itemObj={child} />;
@@ -70,12 +68,16 @@ export default function Workflow(props) {
                 ADD ITEM
             </div>
 
-            <div style={style.parent.list}>{childrenList()}</div>
+            <div style={style.parent.list}>{listChildren()}</div>
 
             {/* form */}
             {state.form.show ? (
                 <Form
-                    action={formHandler.formAction.bind(this, {setState, state})}
+                    action={formHandler.formAction.bind(this, {
+                        setState,
+                        state,
+                        sharedRenerer: sharedRenerer.run,
+                    })}
                     itemObj={state.itemObj}
                     form={state.form}
                 />

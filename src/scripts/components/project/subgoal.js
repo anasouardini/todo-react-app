@@ -8,7 +8,7 @@ import Tag from '../shared/tag';
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../shared/sharedState';
+import sharedState, {sharedRenerer} from '../shared/sharedState';
 
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -49,7 +49,11 @@ const SubGoal = (props) => {
             {/* Form */}
             {state.form.show ? (
                 <Form
-                    action={formHandler.formAction.bind(this, {setState, state})}
+                    action={formHandler.formAction.bind(this, {
+                        setState,
+                        state,
+                        sharedRenerer: sharedRenerer.run,
+                    })}
                     itemObj={state.itemObj}
                     form={state.form}
                 />

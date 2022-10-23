@@ -4,9 +4,7 @@ import {Link} from 'react-router-dom';
 import Form from '../shared/form/form';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../shared/sharedState';
-
-import TODO from '../../todoModule';
+import sharedState, {sharedRenerer} from '../shared/sharedState';
 
 export default function Project(props) {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -46,7 +44,11 @@ export default function Project(props) {
             {/* form */}
             {state.form.show ? (
                 <Form
-                    action={formHandler.formAction.bind(this, {setState, state})}
+                    action={formHandler.formAction.bind(this, {
+                        setState,
+                        state,
+                        sharedRenerer: sharedRenerer.run,
+                    })}
                     itemObj={state.itemObj}
                     form={state.form}
                 />

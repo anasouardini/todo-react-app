@@ -7,13 +7,22 @@ import Goal from '../components/project/goal';
 
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../components/shared/sharedState';
+import sharedState, {sharedRenerer} from '../components/shared/sharedState';
 
 const Project = () => {
     const {ID} = useParams();
     const [state, setState] = useState(sharedState(TODO.getItemByID(ID)));
 
-    const listGoals = () => {
+    //TODO: move the renderer to sharedState.js
+    const forceRending = () => {
+        setState({
+            ...state,
+            itemObj: TODO.getItemByID(ID),
+        });
+    };
+    sharedRenerer.run = forceRending; //shared reference
+
+    const listChildren = () => {
         return Object.keys(state.itemObj.children).map((childKey) => {
             const child = state.itemObj.children[childKey];
             return <Goal key={child.ID} itemObj={child} />;
@@ -39,7 +48,7 @@ const Project = () => {
                 </div>
                 <div style={{marginTop: '2rem'}} className="project-container" data-id={state.itemObj.ID}>
                     {/* goals list */}
-                    {listGoals()}
+                    {listChildren()}
 
                     {/* add a new goal Button*/}
                     <div

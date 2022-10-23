@@ -6,13 +6,13 @@ import SubGoal from './subgoal';
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState from '../shared/sharedState';
+import sharedState, {sharedRenerer} from '../shared/sharedState';
 import Tag from '../shared/tag';
 
 const Goal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
 
-    const listSubGoals = () => {
+    const listChildren = () => {
         return Object.keys(state.itemObj.children).map((childKey) => {
             const child = state.itemObj.children[childKey];
             return <SubGoal key={child.ID} itemObj={child} parentID={state.itemObj.ID} />;
@@ -56,7 +56,7 @@ const Goal = (props) => {
             </div>
 
             {/* sub-goals list */}
-            {listSubGoals()}
+            {listChildren()}
 
             {/* add a new sub goal Button */}
             <div
@@ -71,7 +71,11 @@ const Goal = (props) => {
             {/* Form */}
             {state.form.show ? (
                 <Form
-                    action={formHandler.formAction.bind(this, {setState, state})}
+                    action={formHandler.formAction.bind(this, {
+                        setState,
+                        state,
+                        sharedRenerer: sharedRenerer.run,
+                    })}
                     itemObj={state.itemObj}
                     form={state.form}
                 />

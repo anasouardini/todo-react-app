@@ -21,7 +21,7 @@ const formHandler = (() => {
 
         setState(newObj);
     };
-    const formAction = ({setState, state}, options, action) => {
+    const formAction = ({setState, state, sharedRenerer}, options, action) => {
         switch (action) {
             case FORM_MODE.create:
                 //! blindly trandporting properties over to the factory function
@@ -34,7 +34,8 @@ const formHandler = (() => {
                 break;
             case FORM_MODE.delete:
                 TODO.deleteItemByID(state.itemObj.ID);
-                //TODO: render the parent
+                sharedRenerer();
+
                 return;
                 break;
         }
