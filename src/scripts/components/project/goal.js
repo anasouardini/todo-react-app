@@ -1,25 +1,15 @@
 import React, {Component, useState} from 'react';
-import Form from '../shared/form/form';
 
 import SubGoal from './subgoal';
 
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../shared/sharedState';
+import {sharedState, sharedRenerer, listChildren, renderForm} from '../shared/sharedUtils';
 import Tag from '../shared/tag';
 
 const Goal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
-
-    const listChildren = () => {
-        return Object.keys(state.itemObj.children).map((childKey) => {
-            const child = state.itemObj.children[childKey];
-            return <SubGoal key={child.ID} itemObj={child} parentID={state.itemObj.ID} />;
-        });
-    };
-
-    // console.log(state.itemObj.childType);
 
     const style = {
         parent: {
@@ -34,14 +24,15 @@ const Goal = (props) => {
             },
         },
     };
-
     return (
-        <div className="cards-container" data-id={state.itemObj.ID}>
+        <div key={state.itemObj.ID} className="cards-container">
             {/* goal tags */}
             <div className="tags">
-                {state.itemObj.fields.tags.value.map((tag) => {
-                    return <Tag tag={tag} />;
-                })}
+                {state.itemObj.fields.tags.value.map((tag) => (
+                    <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                        {tag.text}
+                    </Tag>
+                ))}
             </div>
 
             {/* goal header */}
@@ -56,7 +47,7 @@ const Goal = (props) => {
             </div>
 
             {/* sub-goals list */}
-            {listChildren()}
+            {listChildren(state.itemObj.children, SubGoal)}
 
             {/* add a new sub goal Button */}
             <div
@@ -69,19 +60,7 @@ const Goal = (props) => {
             </div>
 
             {/* Form */}
-            {state.form.show ? (
-                <Form
-                    action={formHandler.formAction.bind(this, {
-                        setState,
-                        state,
-                        sharedRenerer: sharedRenerer.run,
-                    })}
-                    itemObj={state.itemObj}
-                    form={state.form}
-                />
-            ) : (
-                <></>
-            )}
+            {renderForm({state, setState})}
         </div>
     );
 };

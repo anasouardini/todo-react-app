@@ -1,33 +1,23 @@
 import React, {Component, useState} from 'react';
 import {useParams, Link} from 'react-router-dom';
 import TODO from '../todoModule';
-
-import Form from '../components/shared/form/form';
 import Goal from '../components/project/goal';
-
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../components/shared/sharedState';
+import {sharedState, sharedRenerer, listChildren, renderForm} from '../components/shared/sharedUtils';
 
 const Project = () => {
     const {ID} = useParams();
     const [state, setState] = useState(sharedState(TODO.getItemByID(ID)));
 
-    //TODO: move the renderer to sharedState.js
     const forceRending = () => {
         setState({
             ...state,
             itemObj: TODO.getItemByID(ID),
         });
     };
-    sharedRenerer.run = forceRending; //shared reference
 
-    const listChildren = () => {
-        return Object.keys(state.itemObj.children).map((childKey) => {
-            const child = state.itemObj.children[childKey];
-            return <Goal key={child.ID} itemObj={child} />;
-        });
-    };
+    sharedRenerer.run = forceRending; //shared reference
 
     if (state.itemObj) {
         return (
@@ -48,7 +38,7 @@ const Project = () => {
                 </div>
                 <div style={{marginTop: '2rem'}} className="project-container" data-id={state.itemObj.ID}>
                     {/* goals list */}
-                    {listChildren()}
+                    {listChildren(state.itemObj.children, Goal)}
 
                     {/* add a new goal Button*/}
                     <div
@@ -63,15 +53,7 @@ const Project = () => {
                     </div>
 
                     {/* form */}
-                    {state.form.show ? (
-                        <Form
-                            action={formHandler.formAction.bind(this, {setState, state})}
-                            itemObj={state.itemObj}
-                            form={state.form}
-                        />
-                    ) : (
-                        <></>
-                    )}
+                    {renderForm({state, setState})}
                 </div>
             </>
         );

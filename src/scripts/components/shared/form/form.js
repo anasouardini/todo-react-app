@@ -1,10 +1,70 @@
-import React from 'react';
+import React, {useState} from 'react';
 import formHandler from './formHandler';
 const {FORM_MODE} = formHandler;
 
-import FormTags from './formTags';
+import TagsForm from './TagsForm';
 
-const Form = (props) => {
+export default function Form(props) {
+    const [state, setState] = useState({
+        subForms: {
+            show: '',
+            tags: {
+                value: [],
+            },
+        },
+    });
+
+    const subFormsResolver = {
+        tags: TagsForm,
+    };
+
+    const subFormAction = (returnedValue, action) => {
+        let subFormState = {};
+
+        if (action == 'submit') {
+            subFormState = {
+                [state.subForms.show]: {
+                    value: returnedValue,
+                },
+            };
+        }
+
+        const newState = {
+            subForms: {
+                ...state.subForms,
+                ...subFormState,
+            },
+        };
+
+        //close subForm
+        newState.subForms.show = '';
+        setState(newState);
+    };
+    const showSubForm = (subform, fieldValue, e) => {
+        e.stopPropagation();
+
+        state.subForms[subform].value = fieldValue;
+        setState({
+            subForms: {
+                ...state.subForms,
+                show: subform,
+                [subform]: {value: fieldValue},
+            },
+        });
+    };
+
+    const renderSubForm = () => {
+        const subformType = state.subForms.show;
+        const Component = subFormsResolver[subformType];
+        return (
+            <Component
+                data-type={subformType}
+                fieldValue={state.subForms[subformType].value}
+                action={subFormAction}
+            />
+        );
+    };
+
     const style = {
         pannel: {
             background: 'rgba(255, 255, 255, 1)',
@@ -70,14 +130,15 @@ const Form = (props) => {
         }
 
         if (fields) {
+            //! AN AWFUL WAY TO DO THIS
             //set all inputs
-            [...document.querySelector('.fields').children].forEach((fieldLabel) => {
-                // console.log(fieldLabel.children[0]);
-                const name = fieldLabel.getAttribute('name');
-                if (name == 'tags') {
-                    fields[name].value = [];
+            [...document.querySelector('.fields').children].forEach((field) => {
+                const name = field.getAttribute('name');
+                const type = field.getAttribute('data-type');
+                if (type != 'text') {
+                    fields[name].value = state.subForms[type].value;
                 } else {
-                    fields[name].value = fieldLabel.children[0].value;
+                    fields[name].value = field.children[0].value;
                 }
             });
         }
@@ -95,11 +156,21 @@ const Form = (props) => {
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
             // console.log(field.type);
-            if (field.type == 'tags') {
-                return <FormTags tags={field.value} key={fieldKey} />;
+            if (field.type != 'text') {
+                // return <TagsForm tags={field.value} key={fieldKey} />;
+                return (
+                    <button
+                        data-type={field.type}
+                        name={field.type}
+                        key={fieldKey}
+                        onClick={showSubForm.bind(this, field.type, field.value)}
+                    >
+                        Add Tags
+                    </button>
+                );
             } else {
                 return (
-                    <label key={fieldKey} name={fieldKey}>
+                    <label key={fieldKey} name={fieldKey} data-type="text">
                         {fieldKey}
                         <input style={style.pannel.inputs.field} defaultValue={field.value} />
                     </label>
@@ -146,8 +217,8 @@ const Form = (props) => {
                     )}
                 </div>
             </div>
+            {/* SUB FORM */}
+            {state.subForms.show != '' ? renderSubForm() : <></>}
         </div>
     );
-};
-
-export default Form;
+}

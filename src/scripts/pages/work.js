@@ -1,13 +1,10 @@
 import React, {useState} from 'react';
 import TODO from '../todoModule';
 import {Link} from 'react-router-dom';
-
 import Workflow from '../components/work/workflow';
-
-import Form from '../components/shared/form/form';
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../components/shared/sharedState';
+import {sharedState, sharedRenerer, listChildren, renderForm} from '../components/shared/sharedUtils';
 
 export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork()));
@@ -27,30 +24,16 @@ export default function Work(props) {
     };
     sharedRenerer.run = forceRending; //shared reference
 
-    const listChildren = () =>
-        Object.keys(state.itemObj.children).map((childKey) => {
-            const child = state.itemObj.children[childKey];
-            return <Workflow key={child.ID} itemObj={child} />;
-        });
-
     return (
         <div style={style.parent}>
             <button onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.create)}>
                 New Workflow
             </button>
 
-            <div>{listChildren()}</div>
+            <div>{listChildren(state.itemObj.children, Workflow)}</div>
 
             {/* Form */}
-            {state.form.show ? (
-                <Form
-                    action={formHandler.formAction.bind(this, {setState, state})}
-                    itemObj={state.itemObj}
-                    form={state.form}
-                />
-            ) : (
-                <></>
-            )}
+            {renderForm({state, setState})}
         </div>
     );
 }

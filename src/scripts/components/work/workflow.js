@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import Project from './project';
-
-import Form from '../shared/form/form';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../shared/sharedState';
+import {sharedState, sharedRenerer, listChildren, renderForm} from '../shared/sharedUtils';
 
 export default function Workflow(props) {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -42,12 +40,6 @@ export default function Workflow(props) {
         },
     };
 
-    const listChildren = () =>
-        Object.keys(state.itemObj.children).map((childKey) => {
-            const child = state.itemObj.children[childKey]; //child is project
-            return <Project key={child.ID} itemObj={child} />;
-        });
-
     return (
         <div style={style.parent}>
             <h2 style={style.parent.title}>
@@ -68,22 +60,10 @@ export default function Workflow(props) {
                 ADD ITEM
             </div>
 
-            <div style={style.parent.list}>{listChildren()}</div>
+            <div style={style.parent.list}>{listChildren(state.itemObj.children, Project)}</div>
 
             {/* form */}
-            {state.form.show ? (
-                <Form
-                    action={formHandler.formAction.bind(this, {
-                        setState,
-                        state,
-                        sharedRenerer: sharedRenerer.run,
-                    })}
-                    itemObj={state.itemObj}
-                    form={state.form}
-                />
-            ) : (
-                <></>
-            )}
+            {renderForm({state, setState})}
         </div>
     );
 }

@@ -1,17 +1,19 @@
-import React from 'react';
+import React, {Children} from 'react';
 
 export default function Tag(props) {
     const style = {
         tag: {
-            background: props.tag.background,
-            color: props.tag.color,
-            ...props.tagStyle,
+            display: 'inline-block',
+            width: 'max-content',
+            padding: '4px 10px 3px',
+            marginBottom: '5px',
+            marginLeft: '5px',
+            borderRadius: '10px',
+            fontSize: '.7rem',
+            fontWeight: 'bolder',
+            ...props.style,
         },
     };
 
-    return (
-        <div className="tag" data-id={props.tag.ID} style={style.tag}>
-            {props.tag.text}
-        </div>
-    );
+    return <label style={style.tag}>{props.children}</label>;
 }

@@ -1,10 +1,8 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
-
-import Form from '../shared/form/form';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../shared/sharedState';
+import {sharedState, sharedRenerer, renderForm} from '../shared/sharedUtils';
 
 export default function Project(props) {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -42,19 +40,7 @@ export default function Project(props) {
             <p style={{marginTop: '.5rem'}}>{state.itemObj.fields.desc.value}</p>
 
             {/* form */}
-            {state.form.show ? (
-                <Form
-                    action={formHandler.formAction.bind(this, {
-                        setState,
-                        state,
-                        sharedRenerer: sharedRenerer.run,
-                    })}
-                    itemObj={state.itemObj}
-                    form={state.form}
-                />
-            ) : (
-                <></>
-            )}
+            {renderForm({state, setState})}
         </div>
     );
 }

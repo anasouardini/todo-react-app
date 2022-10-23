@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
 
 // Components
-import Form from '../shared/form/form';
 import Tag from '../shared/tag';
 
 // SHARED
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import sharedState, {sharedRenerer} from '../shared/sharedState';
+import {sharedState, sharedRenerer, renderForm} from '../shared/sharedUtils';
 
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
@@ -26,41 +25,31 @@ const SubGoal = (props) => {
             },
         },
     };
-
     return (
-        <div style={style.parent} className="card" draggable="true" data-id={state.itemObj.ID}>
-            {/* sub goal tags */}
-            <div className="tags">
-                {state.itemObj.fields.tags.value.map((tag) => {
-                    return <Tag tag={tag} />;
-                })}
+        <>
+            <div key={state.itemObj.ID} style={style.parent} className="card" draggable="true">
+                {/* sub goal tags */}
+                <div className="tags">
+                    {state.itemObj.fields.tags.value.map((tag) => (
+                        <Tag key={tag.ID} style={{color: tag.color, background: tag.background}}>
+                            {tag.text}
+                        </Tag>
+                    ))}
+                </div>
+
+                <p style={style.title}>{state.itemObj.fields.title.value}</p>
+
+                {/* EDIT */}
+                <span
+                    onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                    style={style.parent.edit}
+                >
+                    ...
+                </span>
             </div>
-
-            <p style={style.title}>{state.itemObj.fields.title.value}</p>
-
-            {/* EDIT */}
-            <span
-                onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.edit)}
-                style={style.parent.edit}
-            >
-                ...
-            </span>
-
             {/* Form */}
-            {state.form.show ? (
-                <Form
-                    action={formHandler.formAction.bind(this, {
-                        setState,
-                        state,
-                        sharedRenerer: sharedRenerer.run,
-                    })}
-                    itemObj={state.itemObj}
-                    form={state.form}
-                />
-            ) : (
-                <></>
-            )}
-        </div>
+            {renderForm({state, setState})}
+        </>
     );
 };
 

@@ -14,7 +14,7 @@ const formHandler = (() => {
                 title:
                     mode == FORM_MODE.create
                         ? `create a new ${state.itemObj.childType}`
-                        : `${state.itemObj.childType}: ${state.form.fields.self.title.value}`,
+                        : `${state.itemObj.type}: ${state.form.fields.self.title.value}`,
                 submit: mode,
             },
         };

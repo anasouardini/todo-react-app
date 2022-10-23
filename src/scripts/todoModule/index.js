@@ -5,19 +5,19 @@ const TODO = (() => {
     let TAGS = {
         list: [
             {
-                ID: '',
+                ID: '234578656',
                 background: '#27ae60',
                 color: '#fff',
                 text: 'Not Done',
             },
             {
-                ID: '',
+                ID: '754523452',
                 background: '#d35400',
                 color: '#fff',
                 text: 'In Progress',
             },
             {
-                ID: '',
+                ID: '874563423',
                 background: '#2c3e50',
                 color: '#fff',
                 text: 'Done',
