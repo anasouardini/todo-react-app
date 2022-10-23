@@ -71,9 +71,10 @@ export default function Project(props) {
             <p style={{marginTop: '.5rem'}}>{state.itemObj.fields.desc.value}</p>
 
             {/* Menu */}
-            {renderMenu(state.menu.show, state.itemObj.ID)}
+            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
+            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
             {/* form */}
-            {renderForm(state.form.show, state.itemObj.ID)}
+            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
         </div>
     );
 }

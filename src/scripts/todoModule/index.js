@@ -57,7 +57,7 @@ const TODO = (() => {
     };
 
     //profileID-projectID-GoalID-subGoalID
-    let IDsList = [];
+    let IDsList = []; //! the worst idea ever
     const genID = () => {
         let rand = Math.ceil(Math.random() * 999999999999).toString();
         while (IDsList.includes(rand)) {

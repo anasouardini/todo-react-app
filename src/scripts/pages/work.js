@@ -16,10 +16,10 @@ import {Workflow} from '../imports/components';
 
 export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork(), '', 'WorkPage'));
-    console.log(state.itemObj.children);
+    // console.log(state.itemObj.children);
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, state, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -49,9 +49,10 @@ export default function Work(props) {
             <div>{listChildren(state.itemObj.children, Workflow)}</div>
 
             {/* Menu */}
-            {renderMenu(state.menu.show, state.itemObj.ID)}
+            {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
+            {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
             {/* form */}
-            {renderForm(state.form.show, state.itemObj.ID)}
+            {state.form.show ? renderForm(state.itemObj.ID) : <></>}
         </div>
     );
 }

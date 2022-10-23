@@ -68,9 +68,10 @@ export default function ProjectPage() {
                     </div>
 
                     {/* Menu */}
-                    {renderMenu(state.menu.show, state.itemObj.ID)}
+                    {/* {renderMenu(state.menu.show, state.itemObj.ID)} */}
+                    {state.menu.show ? renderMenu(state.itemObj.ID) : <></>}
                     {/* form */}
-                    {renderForm(state.form.show, state.itemObj.ID)}
+                    {state.form.show ? renderForm(state.itemObj.ID) : <></>}
                 </div>
             </>
         );

@@ -1,31 +1,21 @@
 import {React, TODO, deepClone, FORM_MODE, showForm, bridge} from '../../imports/tools';
 import {Form, ItemMenu} from '../../imports/components';
 
-export const renderForm = (show, ID) => {
-    if (show) {
-        // console.log('render form state', bridge[ID].state);
-        const parentState = deepClone(bridge[ID].state);
-        return <Form ID={ID} />;
-    } else {
-        return <></>;
-    }
+export const renderForm = (ID) => {
+    const parentState = deepClone(bridge[ID].state);
+    return <Form ID={ID} />;
 };
 
-export const renderMenu = (show, ID) => {
-    if (show) {
-        const parentState = deepClone(bridge[ID].state);
-        return (
-            <ItemMenu
-                ID={ID}
-                showForm={() => {
-                    showForm(parentState.itemObj.ID, FORM_MODE.edit);
-                }}
-            />
-        );
-    } else {
-        // console.log('render menu show ', parentState.menu.show);
-        return <></>;
-    }
+export const renderMenu = (ID) => {
+    const parentState = deepClone(bridge[ID].state);
+    return (
+        <ItemMenu
+            ID={ID}
+            showForm={() => {
+                showForm(parentState.itemObj.ID, FORM_MODE.edit);
+            }}
+        />
+    );
 };
 
 export const showMenu = (ID) => {
