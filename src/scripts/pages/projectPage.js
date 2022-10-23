@@ -11,7 +11,7 @@ import {
     renderMenu,
     listChildren,
     renderForm,
-    initBridge,
+    Bridge,
 } from '../imports/tools';
 
 import {Goal} from '../imports/components';
@@ -35,7 +35,7 @@ export default function ProjectPage() {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     if (state.itemObj) {
@@ -66,6 +66,7 @@ export default function ProjectPage() {
                         style={{order: '999999', cursor: 'pointer'}}
                         // onClick={showForm.bind(this, {setState, state}, FORM_MODE.create)}
                         onClick={(e) => {
+                            e.stopPropagation();
                             showForm(state.itemObj.id, FORM_MODE.create);
                         }}
                     >

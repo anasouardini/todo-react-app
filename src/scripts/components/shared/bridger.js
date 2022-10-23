@@ -1,21 +1,24 @@
-export const Bridge = {};
+const Bridges = {};
 
-export const bridgeState = (ID, bridge, newState) => {
+const setState = (componentID, bridge, newState) => {
     if (newState) {
-        Bridge[ID][bridge].state = newState;
+        Bridges[componentID][bridge].state = newState;
     }
-    Bridge[ID][bridge].render(Bridge[ID][bridge].state);
+    Bridges[componentID][bridge].render(Bridges[componentID][bridge].state);
 };
 
-export const initBridge = (ID, bridgesObj) => {
+const getState = (componentID, bridge) => Bridges[componentID][bridge].state;
+
+const initBridge = (componentID, bridgesObj) => {
     if (!bridgesObj?.render) {
         bridgesObj.render = () => {
             console.error('render function is not set');
         };
     }
 
-    Bridge[ID] = {...bridgesObj};
+    Bridges[componentID] = {...bridgesObj};
 };
 
-//TODO: add a state getter
+export const Bridge = {initBridge, getState, setState};
+
 //TODO: separate states, and pass setState as the CB

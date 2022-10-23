@@ -1,6 +1,6 @@
 ## CODE
 
--   use useRef instead of document.methods
+-   use useRef instead of dom manipulation methods
 -   try to split state into smaller states (the separate form state will get changes from the itemObj state)
 
 -   tailwindcss

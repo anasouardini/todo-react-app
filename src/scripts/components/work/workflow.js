@@ -9,7 +9,7 @@ import {
     renderMenu,
     listChildren,
     renderForm,
-    initBridge,
+    Bridge,
 } from '../../imports/tools';
 import {Project} from '../../imports/components';
 
@@ -31,7 +31,7 @@ export default function Workflow(props) {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {
@@ -86,6 +86,7 @@ export default function Workflow(props) {
             <div
                 style={style.parent.addItem}
                 onClick={(e) => {
+                    e.stopPropagation();
                     showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >

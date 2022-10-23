@@ -1,13 +1,4 @@
-import {
-    React,
-    useState,
-    FORM_MODE,
-    deepClone,
-    TODO,
-    bridge,
-    bridgeState,
-    objMerge,
-} from '../../../imports/tools';
+import {React, useState, FORM_MODE, deepClone, TODO, Bridge} from '../../../imports/tools';
 import {TagsForm, Tag} from '../../../imports/components';
 
 export default function Form(props) {
@@ -20,9 +11,9 @@ export default function Form(props) {
                 value: [],
             },
         },
-        parentState: deepClone(bridge[props.id]['itemObj'].state),
+        parentState: deepClone(Bridge.getState(props.id, 'itemObj')),
     });
-    // console.log(deepClone(bridge[props.id].state.form));
+    // console.log(deepClone(Bridges[props.id].state.form));
 
     const subFormsResolver = {
         tags: TagsForm,
@@ -152,6 +143,7 @@ export default function Form(props) {
         return fieldsCpy;
     };
 
+    //- split this monster
     const formAction = async (action, e) => {
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
@@ -175,10 +167,10 @@ export default function Form(props) {
             if (response) {
                 //- wierd but the form doesn't unmount when I unmount it's parent
                 state.parentState.form.show = false;
-                bridgeState(props.id, 'itemObj', state.parentState); // unmount form
+                Bridge.setState(props.id, 'itemObj', state.parentState); // unmount form
 
                 // re-render parent // no state is changed
-                bridgeState(parentID, 'itemObj');
+                Bridge.setState(parentID, 'itemObj');
 
                 newState = deepClone(state.parentState);
             }
@@ -230,7 +222,7 @@ export default function Form(props) {
 
         // console.log(newState);
         newState.form.show = false;
-        bridgeState(props.id, 'itemObj', newState);
+        Bridge.setState(props.id, 'itemObj', newState);
     };
 
     const listFields = () => {

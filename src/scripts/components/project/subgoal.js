@@ -2,15 +2,11 @@ import {
     React,
     useState,
     useEffect,
-    TODO,
-    FORM_MODE,
-    showForm,
     sharedState,
     renderForm,
     showMenu,
     renderMenu,
-    initBridge,
-    bridge,
+    Bridge,
 } from '../../imports/tools';
 import {Tag} from '../../imports/components';
 import {listTags} from '../shared/sharedUtils';
@@ -33,7 +29,7 @@ const SubGoal = (props) => {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {

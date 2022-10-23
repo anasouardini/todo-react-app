@@ -1,9 +1,9 @@
-import {objMerge, bridge, mutate, deepClone, bridgeState, TODO} from '../../../imports/tools';
+import {Bridge, deepClone, TODO} from '../../../imports/tools';
 
 const FORM_MODE = {create: 'create', edit: 'edit', delete: 'delete', cancel: 'cancel'};
 
 const showForm = (ID, mode) => {
-    const parentState = deepClone(bridge[ID]['itemObj'].state); //deepCloning to be extra safe
+    const parentState = deepClone(Bridge.getState(ID, 'itemObj')); //deepCloning to be extra safe
 
     // console.log('show form state', parentState);
 
@@ -16,7 +16,7 @@ const showForm = (ID, mode) => {
     parentState.form.submit = mode;
     parentState.menu.show = false;
 
-    bridgeState(ID, 'itemObj', parentState);
+    Bridge.setState(ID, 'itemObj', parentState);
 };
 
 export {showForm, FORM_MODE};

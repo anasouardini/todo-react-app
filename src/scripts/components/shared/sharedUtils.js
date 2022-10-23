@@ -1,13 +1,13 @@
-import {React, TODO, deepClone, FORM_MODE, showForm, bridge, bridgeState} from '../../imports/tools';
+import {React, TODO, deepClone, FORM_MODE, showForm, Bridge} from '../../imports/tools';
 import {Form, ItemMenu} from '../../imports/components';
 
 export const renderForm = (id) => {
-    const parentState = deepClone(bridge[id].state);
+    // const parentState = deepClone(Bridge.getState(id, 'itemObj'));
     return <Form id={id} />;
 };
 
 export const renderMenu = (id) => {
-    const parentState = deepClone(bridge[id]['itemObj'].state);
+    const parentState = deepClone(Bridge.getState(id, 'itemObj'));
     return (
         <ItemMenu
             id={id}
@@ -19,10 +19,10 @@ export const renderMenu = (id) => {
 };
 
 export const showMenu = (id) => {
-    const parentState = deepClone(bridge[id]['itemObj'].state);
+    const parentState = deepClone(Bridge.getState(id, 'itemObj'));
 
     parentState.menu.show = true;
-    bridgeState(id, 'itemObj', parentState);
+    Bridge.setState(id, 'itemObj', parentState);
 };
 
 export const sharedState = (itemObj) => {

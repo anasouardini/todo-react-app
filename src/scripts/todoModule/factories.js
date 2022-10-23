@@ -1,5 +1,5 @@
 const factories = (() => {
-    const fieldTypes = {text: 'text', tags: 'tags', number: 'number'};
+    // const fieldTypes = {text: 'text', tags: 'tags', number: 'number'};
 
     const sharedFallbakProps_strong = {
         title: {
@@ -63,8 +63,7 @@ const factories = (() => {
 
     const workflow = (ID, fields, parentID) => {
         //TODO: constraint API
-        return {ID, fields, type: 'workflow'};
-        parentID;
+        return {ID, fields, type: 'workflow', parentID};
     };
 
     const project = (ID, fields, parentID) => {

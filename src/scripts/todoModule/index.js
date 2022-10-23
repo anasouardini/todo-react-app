@@ -231,18 +231,7 @@ const TODO = (() => {
 
     const createUser = async (password) => {
         const res = await BRIDGE.write('Users', {props: {password}});
-
-        if (res) {
-            updateHash(res);
-
-            dbObj[parentType].items[parentID].childrenIDs.push(res.id);
-            dbObj[res.type].items[res.id] = res;
-
-            saveWork();
-            return true;
-        }
-
-        return false;
+        return !!res;
     };
 
     const createItem = async (parentType, parentID, fields) => {
@@ -314,7 +303,8 @@ const TODO = (() => {
         const response = await modifyItem(itemType, itemID, {parent: newParentID});
 
         if (response) {
-            getParent(itemType, itemID).childrenIDs.splice(childrenIDs.indexOf(itemID));
+            const childrenIDs = getParent(itemType, itemID).childrenIDs;
+            childrenIDs.splice(childrenIDs.indexOf(itemID));
             dbObj[dbObj[itemType].typeDe.parent].items[newParentID].childrenIDs.push(itemID);
             return true;
         }

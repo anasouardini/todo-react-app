@@ -2,7 +2,6 @@ import {
     React,
     useEffect,
     useState,
-    TODO,
     FORM_MODE,
     showForm,
     sharedState,
@@ -10,7 +9,7 @@ import {
     listChildren,
     showMenu,
     renderForm,
-    initBridge,
+    Bridge,
 } from '../../imports/tools';
 
 import {SubGoal, Tag} from '../../imports/components';
@@ -35,7 +34,7 @@ const Goal = (props) => {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {
@@ -80,6 +79,7 @@ const Goal = (props) => {
                 data-id={state.itemObj.id}
                 style={{order: '999999'}}
                 onClick={(e) => {
+                    e.stopPropagation();
                     showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >

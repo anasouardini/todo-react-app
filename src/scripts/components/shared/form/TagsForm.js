@@ -75,7 +75,7 @@ export default function TagsForm(props) {
                 {/* fieldValue: array of tags */}
 
                 {Object.values(state.availTags).length ? (
-                    Object.values(state.availTags).map((tag, index) => {
+                    Object.values(state.availTags).map((tag) => {
                         const tagUsed = state.tagsValue.some((usedTag) => usedTag.id == tag.id);
                         if (tagUsed) {
                             usedTags = [...state.tagsValue];
@@ -104,7 +104,7 @@ export default function TagsForm(props) {
                         );
                     })
                 ) : (
-                    <p>You Haven't created any tags yet!!</p>
+                    <p>You Haven&apos;t created any tags yet!!</p>
                 )}
 
                 {/* Buttons */}

@@ -1,4 +1,4 @@
-import React, {Children, useState} from 'react';
+import React from 'react';
 
 export default function Tag(props) {
     const style = {

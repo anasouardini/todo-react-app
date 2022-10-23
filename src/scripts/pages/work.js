@@ -3,18 +3,17 @@ import {
     React,
     useEffect,
     useState,
-    Link,
     sharedState,
     listChildren,
     renderForm,
     renderMenu,
     showForm,
     FORM_MODE,
-    initBridge,
+    Bridge,
 } from '../imports/tools';
 import {Workflow} from '../imports/components';
 
-export default function Work(props) {
+export default function Work() {
     const [state, setState] = useState(sharedState(TODO.getWork()));
     // console.log(TODO.getWork());
 
@@ -33,7 +32,7 @@ export default function Work(props) {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {
@@ -47,6 +46,7 @@ export default function Work(props) {
         <div style={style.parent}>
             <button
                 onClick={(e) => {
+                    e.stopPropagation();
                     showForm(state.itemObj.id, FORM_MODE.create);
                 }}
             >

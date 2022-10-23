@@ -16,6 +16,7 @@
 		"browserslist": "^4.21.3",
 		"css-loader": "^6.7.1",
 		"eslint": "^8.18.0",
+		"eslint-plugin-react": "^7.31.8",
 		"eslint-webpack-plugin": "^3.1.1",
 		"html-webpack-plugin": "^5.5.0",
 		"jest": "^28.1.3",
@@ -37,5 +38,10 @@
 		"dotenv": "^16.0.2",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0"
+	},
+	"pnpm": {
+		"overrides": {
+			"terser@>=5.0.0 <5.14.2": ">=5.14.2"
+		}
 	}
 }

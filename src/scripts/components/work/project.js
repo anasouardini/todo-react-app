@@ -3,13 +3,11 @@ import {
     useState,
     useEffect,
     Link,
-    FORM_MODE,
-    showForm,
     sharedState,
     showMenu,
     renderMenu,
     renderForm,
-    initBridge,
+    Bridge,
 } from '../../imports/tools';
 import {Tag} from '../../imports/components';
 import {listTags} from '../shared/sharedUtils';
@@ -32,7 +30,7 @@ export default function Project(props) {
                 },
             },
         };
-        initBridge(state.itemObj.id, bridges);
+        Bridge.initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {
