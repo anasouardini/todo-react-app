@@ -20,15 +20,22 @@ const Goal = (props) => {
     // console.log(props.itemObj);
     const [state, setState] = useState(sharedState(props.itemObj));
 
+    // state bridger
     useEffect(() => {
-        initBridge(state.itemObj.id, state, (newState = undefined) => {
-            // console.log('rerendring', newState);
-            let newStateCpy = newState ?? state;
-            setState({
-                ...newStateCpy,
-                itemObj: props.itemObj,
-            });
-        });
+        const bridges = {
+            itemObj: {
+                state: state,
+                render: (newState = undefined) => {
+                    let newStateCpy = newState ?? state;
+                    // console.log(newStateCpy);
+                    setState({
+                        ...newStateCpy,
+                        itemObj: props.itemObj,
+                    });
+                },
+            },
+        };
+        initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {

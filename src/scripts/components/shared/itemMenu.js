@@ -29,7 +29,7 @@ export default function ItemMenu(props) {
             <div
                 onClick={(e) => {
                     e.stopPropagation();
-                    bridgeState(props.id, objMerge(state.parentState, {menu: {show: false}}));
+                    bridgeState(props.id, 'itemObj', objMerge(state.parentState, {menu: {show: false}}));
                 }}
                 className="overlay"
             ></div>

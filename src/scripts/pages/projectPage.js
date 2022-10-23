@@ -20,15 +20,22 @@ export default function ProjectPage() {
     const {ID} = useParams();
     const [state, setState] = useState(sharedState(TODO.getItem('project', ID)));
 
+    // state bridger
     useEffect(() => {
-        initBridge(state.itemObj.id, state, (newState) => {
-            let newStateCpy = newState ?? state;
-            setState({
-                ...newStateCpy,
-                itemObj: TODO.getItem('project', ID),
-            });
-            // console.log(newState);
-        });
+        const bridges = {
+            itemObj: {
+                state: state,
+                render: (newState = undefined) => {
+                    let newStateCpy = newState ?? state;
+                    // console.log(newStateCpy);
+                    setState({
+                        ...newStateCpy,
+                        itemObj: TODO.getItem('project', ID),
+                    });
+                },
+            },
+        };
+        initBridge(state.itemObj.id, bridges);
     }, []);
 
     if (state.itemObj) {

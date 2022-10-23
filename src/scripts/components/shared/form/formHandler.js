@@ -3,7 +3,7 @@ import {objMerge, bridge, mutate, deepClone, bridgeState, TODO} from '../../../i
 const FORM_MODE = {create: 'create', edit: 'edit', delete: 'delete', cancel: 'cancel'};
 
 const showForm = (ID, mode) => {
-    const parentState = deepClone(bridge[ID].state); //deepCloning to be extra safe
+    const parentState = deepClone(bridge[ID]['itemObj'].state); //deepCloning to be extra safe
 
     // console.log('show form state', parentState);
 
@@ -16,7 +16,7 @@ const showForm = (ID, mode) => {
     parentState.form.submit = mode;
     parentState.menu.show = false;
 
-    bridgeState(ID, parentState);
+    bridgeState(ID, 'itemObj', parentState);
 };
 
 export {showForm, FORM_MODE};

@@ -18,15 +18,22 @@ export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork()));
     // console.log(TODO.getWork());
 
+    // state bridger
     useEffect(() => {
-        initBridge(state.itemObj.id, state, (newState) => {
-            let newStateCpy = newState ?? state;
-            setState({
-                ...newStateCpy,
-                itemObj: TODO.getWork(),
-            });
-            // console.log(newState);
-        });
+        const bridges = {
+            itemObj: {
+                state: state,
+                render: (newState = undefined) => {
+                    let newStateCpy = newState ?? state;
+                    // console.log(newStateCpy);
+                    setState({
+                        ...newStateCpy,
+                        itemObj: TODO.getWork(),
+                    });
+                },
+            },
+        };
+        initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {

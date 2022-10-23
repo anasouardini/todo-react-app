@@ -15,5 +15,9 @@ export default function Tag(props) {
         },
     };
 
-    return <label style={style.tag}>{props.children}</label>;
+    return (
+        <label key="tag" style={style.tag}>
+            {props.children}
+        </label>
+    );
 }

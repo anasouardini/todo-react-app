@@ -1,18 +1,21 @@
-export const bridge = {};
+export const Bridge = {};
 
-export const bridgeState = (ID, newState) => {
+export const bridgeState = (ID, bridge, newState) => {
     if (newState) {
-        bridge[ID].state = newState;
+        Bridge[ID][bridge].state = newState;
     }
-    bridge[ID].render(bridge[ID].state);
+    Bridge[ID][bridge].render(Bridge[ID][bridge].state);
 };
 
-export const initBridge = (
-    projID,
-    state,
-    render = () => {
-        console.error('render function is not set');
+export const initBridge = (ID, bridgesObj) => {
+    if (!bridgesObj?.render) {
+        bridgesObj.render = () => {
+            console.error('render function is not set');
+        };
     }
-) => {
-    bridge[projID] = {state, render};
+
+    Bridge[ID] = {...bridgesObj};
 };
+
+//TODO: add a state getter
+//TODO: separate states, and pass setState as the CB

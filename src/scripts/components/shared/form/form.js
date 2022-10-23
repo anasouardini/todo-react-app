@@ -20,7 +20,7 @@ export default function Form(props) {
                 value: [],
             },
         },
-        parentState: deepClone(bridge[props.id].state),
+        parentState: deepClone(bridge[props.id]['itemObj'].state),
     });
     // console.log(deepClone(bridge[props.id].state.form));
 
@@ -47,7 +47,7 @@ export default function Form(props) {
                     returnedValue.some((subFormTag) => subFormTag.id == fieldsTag.id)
                 );
             } else {
-                identical = !Boolean(returnedValue.length);
+                identical = !returnedValue.length;
             }
 
             field.value = returnedValue;
@@ -173,10 +173,13 @@ export default function Form(props) {
             );
 
             if (response) {
+                //- wierd but the form doesn't unmount when I unmount it's parent
                 state.parentState.form.show = false;
-                bridgeState(props.id, state.parentState);
+                bridgeState(props.id, 'itemObj', state.parentState); // unmount form
 
-                bridge[parentID].render(); //no args means no state mutation
+                // re-render parent // no state is changed
+                bridgeState(parentID, 'itemObj');
+
                 newState = deepClone(state.parentState);
             }
         }
@@ -227,7 +230,7 @@ export default function Form(props) {
 
         // console.log(newState);
         newState.form.show = false;
-        bridgeState(props.id, newState);
+        bridgeState(props.id, 'itemObj', newState);
     };
 
     const listFields = () => {
@@ -254,7 +257,9 @@ export default function Form(props) {
                                 Add Tags
                             </button>
                             {field.value.map((tag) => (
-                                <Tag style={{color: tag.fontclr, background: tag.bgclr}}>{tag.text}</Tag>
+                                <Tag key={tag.id} style={{color: tag.fontclr, background: tag.bgclr}}>
+                                    {tag.text}
+                                </Tag>
                             ))}
                         </div>
                     );

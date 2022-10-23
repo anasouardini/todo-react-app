@@ -18,16 +18,22 @@ import {listTags} from '../shared/sharedUtils';
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
 
-    // console.log('subgoal', state.form);
+    // state bridger
     useEffect(() => {
-        initBridge(state.itemObj.id, state, (newState = undefined) => {
-            let newStateCpy = newState ?? state;
-            // console.log('state after mutate', state);
-            setState({
-                ...newStateCpy,
-                itemObj: props.itemObj,
-            });
-        });
+        const bridges = {
+            itemObj: {
+                state: state,
+                render: (newState = undefined) => {
+                    let newStateCpy = newState ?? state;
+                    // console.log(newStateCpy);
+                    setState({
+                        ...newStateCpy,
+                        itemObj: props.itemObj,
+                    });
+                },
+            },
+        };
+        initBridge(state.itemObj.id, bridges);
     }, []);
 
     const style = {

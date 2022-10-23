@@ -6,7 +6,7 @@ import TODO from '../todoModule';
 import deepClone from '../tools/deepClone';
 import objMerge from '../tools/objMerge';
 
-import {bridge, initBridge, bridgeState} from '../components/shared/bridger';
+import {Bridge, initBridge, bridgeState} from '../components/shared/bridger';
 import {showForm, FORM_MODE} from '../components/shared/form/formHandler';
 
 import {sharedState, renderForm, renderMenu, showMenu, listChildren} from '../components/shared/sharedUtils';
@@ -20,7 +20,7 @@ export {
     TODO,
     deepClone,
     objMerge,
-    bridge,
+    Bridge as bridge,
     initBridge,
     bridgeState,
     showForm,
