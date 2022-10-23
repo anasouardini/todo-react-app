@@ -1,4 +1,3 @@
-import DOM from './dom.js';
 import factories from './factories.js';
 
 const TODO = (() => {
@@ -27,7 +26,7 @@ const TODO = (() => {
             this.list.push({background, color, text});
         },
         deleteTag: (index) => {
-            this.list.splice(index);
+            this.list.splice(index, 1);
         },
     };
 
@@ -144,7 +143,6 @@ const TODO = (() => {
         if (Object.keys(work.children).length) {
             const firstProfile = work.children[Object.keys(work.children)[0]];
             const firstProject = firstProfile.children[Object.keys(firstProfile.children)[0]];
-            DOM.drawProject(firstProject, document.querySelector('.project-board'));
         }
     };
 
@@ -291,7 +289,6 @@ const TODO = (() => {
 
     //EXPORTS
     return {
-        DOM,
         itemsFallback: factories.fallback,
         create,
         modifyItem,

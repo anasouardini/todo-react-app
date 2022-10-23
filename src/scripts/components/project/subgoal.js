@@ -1,17 +1,25 @@
-import React, {useState} from 'react';
-
-// Components
+import React, {useState, useEffect} from 'react';
 import Tag from '../shared/tag';
-
-// SHARED
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
 import {sharedState, sharedRenerer, renderForm, showMenu} from '../shared/sharedUtils';
 import {renderMenu} from '../shared/sharedUtils';
-
+import {initBridge, bridge} from '../shared/bridger';
 const SubGoal = (props) => {
-    const [state, setState] = useState(sharedState(props.itemObj));
+    const [state, setState] = useState(sharedState(props.itemObj, 'Goal', 'SubGoal'));
+    console.log('subgoal new state', state);
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        initBridge('SubGoal', (newState = {}, mutate = false) => {
+            let newStateCpy = mutate ? newState : state;
+            setState({
+                ...newStateCpy,
+                itemObj: props.itemObj,
+            });
+        });
+    }, []);
 
     const style = {
         parent: {
@@ -41,7 +49,13 @@ const SubGoal = (props) => {
                 <p style={style.title}>{state.itemObj.fields.title.value}</p>
 
                 {/* menu button */}
-                <span onClick={() => showMenu({setState, state})} style={style.parent.edit}>
+                <span
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        showMenu({setState, state});
+                    }}
+                    style={style.parent.edit}
+                >
                     ...
                 </span>
             </div>

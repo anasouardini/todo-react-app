@@ -1,12 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, renderForm} from '../shared/sharedUtils';
+import {sharedState, showMenu, renderMenu, renderForm} from '../shared/sharedUtils';
 import Tag from '../shared/tag';
-
+import {initBridge} from '../shared/bridger';
 export default function Project(props) {
-    const [state, setState] = useState(sharedState(props.itemObj));
+    const [state, setState] = useState(sharedState(props.itemObj, 'Workflow', 'Project'));
+
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        const render = (newState) => {
+            setState({
+                ...newState,
+                itemObj: props.itemObj,
+            });
+        };
+        initBridge('Project', render);
+    }, []);
 
     const style = {
         project: {
@@ -43,12 +55,17 @@ export default function Project(props) {
             </h3>
             <div
                 style={style.project.edit}
-                onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    showMenu({setState, state});
+                }}
             >
                 ...
             </div>
             <p style={{marginTop: '.5rem'}}>{state.itemObj.fields.desc.value}</p>
 
+            {/* Menu */}
+            {renderMenu({state, setState})}
             {/* form */}
             {renderForm({state, setState})}
         </div>

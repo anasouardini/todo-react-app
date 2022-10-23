@@ -2,10 +2,22 @@ import React, {useEffect, useState} from 'react';
 import Project from './project';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, listChildren, renderForm} from '../shared/sharedUtils';
-
+import {sharedState, showMenu, renderMenu, listChildren, renderForm} from '../shared/sharedUtils';
+import {initBridge} from '../shared/bridger';
 export default function Workflow(props) {
-    const [state, setState] = useState(sharedState(props.itemObj));
+    const [state, setState] = useState(sharedState(props.itemObj, 'WorkPage', 'Workflow'));
+
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        const render = (newState) => {
+            setState({
+                ...newState,
+                itemObj: props.itemObj,
+            });
+        };
+        initBridge('Workflow', render);
+    }, []);
 
     const style = {
         parent: {
@@ -46,7 +58,10 @@ export default function Workflow(props) {
                 {state.itemObj.fields.title.value}
                 <div
                     style={style.parent.title.edit}
-                    onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        showMenu({setState, state});
+                    }}
                 >
                     ...
                 </div>
@@ -62,7 +77,9 @@ export default function Workflow(props) {
 
             <div style={style.parent.list}>{listChildren(state.itemObj.children, Project)}</div>
 
-            {/* form */}
+            {/* Menu */}
+            {renderMenu({state, setState})}
+            {/* Form */}
             {renderForm({state, setState})}
         </div>
     );

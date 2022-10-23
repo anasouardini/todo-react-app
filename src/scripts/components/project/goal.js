@@ -1,15 +1,30 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useState, useEffect} from 'react';
 
 import SubGoal from './subgoal';
 
 import TODO from '../../todoModule';
 import formHandler from '../shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, listChildren, renderForm} from '../shared/sharedUtils';
+import {sharedState, listChildren, showMenu, renderMenu, renderForm} from '../shared/sharedUtils';
 import Tag from '../shared/tag';
+import {initBridge} from '../shared/bridger';
 
 const Goal = (props) => {
-    const [state, setState] = useState(sharedState(props.itemObj));
+    const [state, setState] = useState(sharedState(props.itemObj, 'ProjectPage', 'Goal'));
+
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        const render = (newState = {}, mutate = false) => {
+            let newStateCpy = mutate ? newState : state;
+            setState({
+                ...newStateCpy,
+                itemObj: props.itemObj,
+            });
+            console.log('goal state', newStateCpy);
+        };
+        initBridge('Goal', render);
+    }, []);
 
     const style = {
         parent: {
@@ -40,7 +55,10 @@ const Goal = (props) => {
                 <h4>{state.itemObj.fields.title.value} </h4>
                 <span
                     style={style.parent.header.edit}
-                    onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        showMenu({setState, state});
+                    }}
                 >
                     ...
                 </span>
@@ -58,7 +76,8 @@ const Goal = (props) => {
             >
                 <p style={{pointerEvents: 'none', display: 'inline'}}>Add a New Card</p>
             </div>
-
+            {/* Menu */}
+            {renderMenu({state, setState})}
             {/* Form */}
             {renderForm({state, setState})}
         </div>

@@ -4,11 +4,23 @@ import {Link} from 'react-router-dom';
 import Workflow from '../components/work/workflow';
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, listChildren, renderForm} from '../components/shared/sharedUtils';
-
+import {sharedState, listChildren, renderForm, renderMenu} from '../components/shared/sharedUtils';
+import {initBridge} from '../components/shared/bridger';
 export default function Work(props) {
-    const [state, setState] = useState(sharedState(TODO.getWork()));
+    const [state, setState] = useState(sharedState(TODO.getWork(), '', 'WorkPage'));
     console.log(state.itemObj.children);
+
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        const render = (newState) => {
+            setState({
+                ...newState,
+                itemObj: TODO.getWork(),
+            });
+        };
+        initBridge('WorkPage', render);
+    }, []);
 
     const style = {
         parent: {
@@ -16,14 +28,6 @@ export default function Work(props) {
             margin: '0 auto',
         },
     };
-
-    const forceRending = () => {
-        setState({
-            ...state,
-            itemObj: TODO.getWork(),
-        });
-    };
-    sharedRenerer.run = forceRending; //shared reference
 
     return (
         <div style={style.parent}>
@@ -33,6 +37,8 @@ export default function Work(props) {
 
             <div>{listChildren(state.itemObj.children, Workflow)}</div>
 
+            {/* Menu */}
+            {renderMenu({state, setState})}
             {/* Form */}
             {renderForm({state, setState})}
         </div>

@@ -1,5 +1,6 @@
 ## CODE
 
+-   create state store with references to setState functions... etc
 -   tailwind
 -   create css components
 

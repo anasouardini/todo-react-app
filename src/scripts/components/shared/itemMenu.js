@@ -24,6 +24,7 @@ export default function ItemMenu(props) {
         <>
             <div onClick={null} className="overlay"></div>
             <div style={style.menu}>
+                <div>{props.itemObj.type}</div>
                 <div style={style.menu.item} onClick={null}>
                     sort by
                 </div>

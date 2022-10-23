@@ -7,15 +7,12 @@ import formHandler from './form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
 import ItemMenu from './itemMenu';
 
-export let sharedRenerer = {run: () => {}};
-
 export const renderForm = ({state, setState}) =>
     state.form.show ? (
         <Form
             action={formAction.bind(this, {
                 setState,
                 state,
-                sharedRenerer: sharedRenerer.run,
             })}
             itemObj={state.itemObj}
             form={state.form}
@@ -24,16 +21,20 @@ export const renderForm = ({state, setState}) =>
         <></>
     );
 
-export const renderMenu = ({state, setState}) =>
-    state.menu.show ? (
-        <ItemMenu
-            showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)}
-            itemObj={state.itemObj}
-            form={state.form}
-        />
-    ) : (
-        <></>
-    );
+export const renderMenu = ({state, setState}) => {
+    console.log('render menu show ', state.menu.show);
+    if (state.menu.show) {
+        return (
+            <ItemMenu
+                showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                itemObj={state.itemObj}
+                form={state.form}
+            />
+        );
+    } else {
+        return <></>;
+    }
+};
 
 export const showMenu = ({state, setState}) => {
     setState({
@@ -45,9 +46,11 @@ export const showMenu = ({state, setState}) => {
     });
 };
 
-export const sharedState = (itemObj) => {
+export const sharedState = (itemObj, parentName, itemName) => {
     // console.log(Object.keys(itemObj.children).length);
     return {
+        parentName,
+        itemName,
         itemObj,
         form: {
             show: false,

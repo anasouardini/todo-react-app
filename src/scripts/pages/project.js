@@ -1,23 +1,29 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {useParams, Link} from 'react-router-dom';
 import TODO from '../todoModule';
 import Goal from '../components/project/goal';
 import formHandler from '../components/shared/form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, listChildren, renderForm} from '../components/shared/sharedUtils';
+import {sharedState, renderMenu, listChildren, renderForm} from '../components/shared/sharedUtils';
+import {initBridge} from '../components/shared/bridger';
 
-const Project = () => {
+export default function Project() {
     const {ID} = useParams();
-    const [state, setState] = useState(sharedState(TODO.getItemByID(ID)));
+    const [state, setState] = useState(sharedState(TODO.getItemByID(ID), '', 'ProjectPage'));
 
-    const forceRending = () => {
-        setState({
-            ...state,
-            itemObj: TODO.getItemByID(ID),
-        });
-    };
-
-    sharedRenerer.run = forceRending; //shared reference
+    //? need to overcome the strict mode
+    // const componentName = arguments.callee.name;
+    useEffect(() => {
+        const render = (newState = {}, mutate = false) => {
+            let newStateCpy = mutate ? newState : state;
+            setState({
+                ...newStateCpy,
+                itemObj: TODO.getItemByID(ID),
+            });
+            console.log(newState);
+        };
+        initBridge('ProjectPage', render);
+    }, []);
 
     if (state.itemObj) {
         return (
@@ -52,6 +58,8 @@ const Project = () => {
                         </div>
                     </div>
 
+                    {/* Menu */}
+                    {renderMenu({state, setState})}
                     {/* form */}
                     {renderForm({state, setState})}
                 </div>
@@ -60,6 +68,4 @@ const Project = () => {
     } else {
         return <h1>the project ID is not valid</h1>;
     }
-};
-
-export default Project;
+}
