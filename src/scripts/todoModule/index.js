@@ -147,8 +147,7 @@ const TODO = (() => {
             return workflowID;
         },
         project: (workflowID, fields) => {
-            let projects = {};
-            projects = work['children'][workflowID]['children'];
+            let projects = work['children'][workflowID]['children'];
             let projectID = workflowID + '-' + genID();
             projects[projectID] = factories.project(projectID, fields);
             saveWork();
@@ -156,8 +155,7 @@ const TODO = (() => {
         },
         goal: (projectID, fields) => {
             const workflowID = projectID.slice(0, projectID.indexOf('-'));
-            let goals = {};
-            goals = work['children'][workflowID]['children'][projectID]['children'];
+            let goals = work['children'][workflowID]['children'][projectID]['children'];
             let goalID = projectID + '-' + genID();
             goals[goalID] = factories.goal(goalID, fields);
             saveWork();

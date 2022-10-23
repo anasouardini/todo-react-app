@@ -4,7 +4,9 @@ import TODO from '../../../todoModule';
 import Tag from '../tag';
 
 export default function TagsForm(props) {
-    // const [state, setState] = useState({});
+    const [state, setState] = useState({
+        tagsValue: [...props.fieldValue],
+    });
 
     const style = {
         parent: {
@@ -76,9 +78,9 @@ export default function TagsForm(props) {
 
                 {availTags.length ? (
                     availTags.map((tag, index) => {
-                        const tagUsed = props.fieldValue.some((usedTag) => usedTag.ID == tag.ID);
+                        const tagUsed = state.tagsValue.some((usedTag) => usedTag.ID == tag.ID);
                         if (tagUsed) {
-                            usedTags = [...props.fieldValue];
+                            usedTags = [...state.tagsValue];
                         }
                         return (
                             <Tag

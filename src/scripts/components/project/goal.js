@@ -11,6 +11,8 @@ import Tag from '../shared/tag';
 const Goal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj));
 
+    console.log(state.form.fields.child.tags);
+
     const style = {
         parent: {
             header: {

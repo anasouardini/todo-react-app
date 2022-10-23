@@ -1,6 +1,7 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import formHandler from './formHandler';
 const {FORM_MODE} = formHandler;
+import deepClone from '../../../tools/deepClone';
 
 import TagsForm from './TagsForm';
 import Tag from '../tag';
@@ -13,6 +14,13 @@ export default function Form(props) {
                 value: [],
             },
         },
+        parentState: {
+            itemObj: deepClone(props.itemObj),
+            form: {
+                ...props.form,
+                fields: deepClone(props.form.fields),
+            },
+        },
     });
 
     const subFormsResolver = {
@@ -20,8 +28,11 @@ export default function Form(props) {
     };
 
     const subFormAction = (returnedValue, action) => {
-        const fields = props.form.mode == 'edit' ? {...props.form.fields.self} : {...props.form.fields.child};
-        fields[state.subForms.show].value = returnedValue;
+        let tags =
+            state.parentState.form.mode == 'edit'
+                ? state.parentState.form.fields.self
+                : state.parentState.form.fields.child;
+        tags[state.subForms.show].value = returnedValue;
 
         let subFormState = {};
 
@@ -34,6 +45,7 @@ export default function Form(props) {
         }
 
         const newState = {
+            ...state,
             subForms: {
                 ...state.subForms,
                 show: '',
@@ -47,8 +59,8 @@ export default function Form(props) {
     const showSubForm = (subform, fieldValue, e) => {
         e.stopPropagation();
 
-        state.subForms[subform].value = fieldValue;
         setState({
+            ...state,
             subForms: {
                 ...state.subForms,
                 show: subform,
@@ -60,13 +72,7 @@ export default function Form(props) {
     const renderSubForm = () => {
         const subformType = state.subForms.show;
         const Component = subFormsResolver[subformType];
-        return (
-            <Component
-                data-type={subformType}
-                fieldValue={state.subForms[subformType].value}
-                action={subFormAction}
-            />
-        );
+        return <Component fieldValue={state.subForms[subformType].value} action={subFormAction} />;
     };
 
     const style = {
@@ -125,12 +131,12 @@ export default function Form(props) {
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
         }
-        const formCpy = {...props.form};
+        const form = state.parentState.form;
         let fields = undefined;
         if (action == FORM_MODE.edit) {
-            fields = formCpy.fields.self;
+            fields = form.fields.self;
         } else if (action == FORM_MODE.create) {
-            fields = formCpy.fields.child;
+            fields = form.fields.child;
         }
 
         if (fields) {
@@ -146,17 +152,21 @@ export default function Form(props) {
                 }
             });
         }
+
         props.action(
             {
-                itemObj: props.itemObj,
-                form: formCpy,
+                itemObj: state.parentState.itemObj,
+                form: form,
             },
             action
         );
     };
 
     const listFields = () => {
-        const fields = props.form.mode == 'edit' ? {...props.form.fields.self} : {...props.form.fields.child};
+        const fields =
+            state.parentState.form.mode == 'edit'
+                ? state.parentState.form.fields.self
+                : state.parentState.form.fields.child;
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
             // console.log(field.type);
@@ -187,8 +197,8 @@ export default function Form(props) {
     return (
         <>
             <div className="overlay" onClick={formAction.bind(this, FORM_MODE.cancel)}>
-                <div style={style.pannel} data-parent-id={props.itemObj.ID}>
-                    <h2 style={style.pannel.h2}>{props.form.title} </h2>
+                <div style={style.pannel} data-parent-id={state.parentState.itemObj.ID}>
+                    <h2 style={style.pannel.h2}>{state.parentState.form.title} </h2>
 
                     {/* inputs */}
                     <div className="fields" style={style.pannel.inputs}>
@@ -199,9 +209,9 @@ export default function Form(props) {
                     <div style={style.pannel.buttons}>
                         <button
                             style={style.pannel.buttons.button}
-                            onClick={formAction.bind(this, props.form.mode)}
+                            onClick={formAction.bind(this, state.parentState.form.mode)}
                         >
-                            {props.form.submit}
+                            {state.parentState.form.submit}
                         </button>
                         <button
                             style={style.pannel.buttons.button}
@@ -211,7 +221,7 @@ export default function Form(props) {
                         </button>
 
                         {/* DELETE BUTTON */}
-                        {props.form.mode != 'create' ? (
+                        {state.parentState.form.mode != 'create' ? (
                             <button
                                 style={style.pannel.buttons.button}
                                 onClick={formAction.bind(this, FORM_MODE.delete)}

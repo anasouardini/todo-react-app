@@ -31,7 +31,7 @@ export const sharedState = (itemObj) => {
             submit: '',
             fields: {
                 self: itemObj.fields,
-                child: TODO.itemsFallback.getChildFields(itemObj.type),
+                child: {...TODO.itemsFallback.getChildFields(itemObj.type)},
             },
         },
     };

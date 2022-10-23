@@ -5,6 +5,7 @@ const formHandler = (() => {
 
     const showForm = ({setState, state}, mode) => {
         // console.log(state);
+        console.log('formhndlerShow', state.form.fields.child.tags);
         const newObj = {
             itemObj: state.itemObj,
             form: {
@@ -39,8 +40,18 @@ const formHandler = (() => {
                 return;
                 break;
         }
+
+        console.log('formhndlerAction', state.form.fields.child.tags);
         options.form.show = false;
-        setState(options);
+        setState({
+            itemObj: {...state.itemObj}, //making a copy to satisfy my paranoia
+            form: {
+                fields: {
+                    self: {...options.form.fields.self},
+                    child: {...state.form.fields.child},
+                },
+            },
+        });
     };
 
     return {FORM_MODE, showForm, formAction};

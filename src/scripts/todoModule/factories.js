@@ -1,5 +1,8 @@
 const factories = (() => {
     const fallback = {
+        //! if you modify this... try not to make their values deeper.
+        //! if you do make sure you don't make a shallow copy of them in the
+        //! form,subform or other components
         workflow: {
             title: {
                 type: 'text',
