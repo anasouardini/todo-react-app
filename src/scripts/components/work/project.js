@@ -8,12 +8,11 @@ import {initBridge} from '../shared/bridger';
 export default function Project(props) {
     const [state, setState] = useState(sharedState(props.itemObj, 'Workflow', 'Project'));
 
-    //? need to overcome the strict mode
-    // const componentName = arguments.callee.name;
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState) => {
+        initBridge(state.itemObj.ID, (newState = undefined) => {
+            let newStateCpy = newState ?? state;
             setState({
-                ...newState,
+                ...newStateCpy,
                 itemObj: props.itemObj,
             });
         });

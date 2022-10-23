@@ -116,15 +116,17 @@ const TODO = (() => {
     };
 
     const getParent = (childID) => {
+        return getItemByID(getParentID(childID));
+    };
+
+    const getParentID = (childID) => {
         const reversed = childID.split('-').reverse().join('-');
 
-        return getItemByID(
-            reversed
-                .slice(reversed.indexOf('-') + 1)
-                .split('-')
-                .reverse()
-                .join('-')
-        );
+        return reversed
+            .slice(reversed.indexOf('-') + 1)
+            .split('-')
+            .reverse()
+            .join('-');
     };
 
     const saveWork = () => {
@@ -296,6 +298,7 @@ const TODO = (() => {
         priorities,
         getItemByID,
         getParent,
+        getParentID,
         deleteItemByID,
         moveItem,
         saveWork,

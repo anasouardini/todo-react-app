@@ -1,5 +1,6 @@
 ## CODE
 
+-   add state to bridge
 -   create state store with references to setState functions... etc
 -   tailwind
 -   create css components
@@ -8,7 +9,6 @@
 
 ### essential
 
--   add priority to fields
 -   sorting tags, default order and sorting by properties
 -   validate inputs in factories
 -   error handling

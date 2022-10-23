@@ -167,7 +167,7 @@ export default function Form(props) {
             TODO.deleteItemByID(state.parentState.itemObj.ID);
             //! the objMerge works because the render function overrides the itemObj to be a reference
             // bridge[state.itemName].render(objMerge(state, {form: {show: false}}));
-            bridge[state.parentState.parentName].render(); //no args means to state mutation
+            bridge[TODO.getParentID(state.parentState.itemObj.ID)].render(); //no args means to state mutation
             return;
         }
 

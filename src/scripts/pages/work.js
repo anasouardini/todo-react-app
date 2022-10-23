@@ -10,14 +10,14 @@ export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork(), '', 'WorkPage'));
     console.log(state.itemObj.children);
 
-    //? need to overcome the strict mode
-    // const componentName = arguments.callee.name;
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState) => {
+        initBridge(state.itemObj.ID, (newState = undefined) => {
+            let newStateCpy = newState ?? state;
             setState({
-                ...newState,
+                ...newStateCpy,
                 itemObj: TODO.getWork(),
             });
+            console.log(newState);
         });
     }, []);
 

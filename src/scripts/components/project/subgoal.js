@@ -8,12 +8,10 @@ import {renderMenu} from '../shared/sharedUtils';
 import {initBridge, bridge} from '../shared/bridger';
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj, 'Goal', 'SubGoal'));
-    console.log('subgoal new state', state);
-    //? need to overcome the strict mode
-    // const componentName = arguments.callee.name;
+
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = {}, mutate = false) => {
-            let newStateCpy = mutate ? newState : state;
+        initBridge(state.itemObj.ID, (newState = undefined) => {
+            let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
                 itemObj: props.itemObj,

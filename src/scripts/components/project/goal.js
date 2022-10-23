@@ -12,8 +12,6 @@ import {initBridge} from '../shared/bridger';
 const Goal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj, 'ProjectPage', 'Goal'));
 
-    //? need to overcome the strict mode
-    // const componentName = arguments.callee.name;
     useEffect(() => {
         initBridge(state.itemObj.ID, (newState = undefined) => {
             let newStateCpy = newState ?? state;
@@ -21,7 +19,6 @@ const Goal = (props) => {
                 ...newStateCpy,
                 itemObj: props.itemObj,
             });
-            console.log('goal state', newStateCpy);
         });
     }, []);
 

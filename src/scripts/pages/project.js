@@ -11,11 +11,9 @@ export default function Project() {
     const {ID} = useParams();
     const [state, setState] = useState(sharedState(TODO.getItemByID(ID), '', 'ProjectPage'));
 
-    //? need to overcome the strict mode
-    // const componentName = arguments.callee.name;
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = {}, mutate = false) => {
-            let newStateCpy = mutate ? newState : state;
+        initBridge(state.itemObj.ID, (newState = undefined) => {
+            let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
                 itemObj: TODO.getItemByID(ID),

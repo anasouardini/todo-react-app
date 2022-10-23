@@ -47,7 +47,7 @@ export default function ItemMenu(props) {
                     style={style.menu.item}
                     onClick={(e) => {
                         e.stopPropagation();
-                        props.showForm;
+                        props.showForm();
                     }}
                 >
                     edit
