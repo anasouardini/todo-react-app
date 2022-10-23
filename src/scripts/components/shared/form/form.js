@@ -1,11 +1,11 @@
 import {
     React,
-    useEffect,
     useState,
     FORM_MODE,
     deepClone,
     TODO,
     bridge,
+    bridgeState,
     objMerge,
 } from '../../../imports/tools';
 import {TagsForm, Tag} from '../../../imports/components';
@@ -19,8 +19,9 @@ export default function Form(props) {
                 value: [],
             },
         },
-        parentState: deepClone(props.parentState),
+        parentState: deepClone(bridge[props.ID].state),
     });
+    // console.log(deepClone(bridge[props.ID].state.form));
 
     const subFormsResolver = {
         tags: TagsForm,
@@ -55,9 +56,7 @@ export default function Form(props) {
         // console.log('new state', newState);
         setState(newState);
     };
-    const showSubForm = (subform, fieldValue, e) => {
-        e.stopPropagation();
-
+    const showSubForm = (subform, fieldValue) => {
         setState({
             ...state,
             subForms: {
@@ -127,17 +126,22 @@ export default function Form(props) {
     };
 
     const formAction = (action, e) => {
-        e.stopPropagation();
-
         if (!e.target.classList.contains('overlay') && !(e.target.tagName == 'BUTTON')) {
             return;
         }
+
         const form = state.parentState.form;
         let fields = undefined;
         if (action == FORM_MODE.edit) {
             fields = form.fields.self;
         } else if (action == FORM_MODE.create) {
             fields = form.fields.child;
+        } else if (action == FORM_MODE.delete) {
+            TODO.deleteItemByID(state.parentState.itemObj.ID);
+            //! the objMerge works because the render function overrides the itemObj to be a reference
+            // bridge[state.itemName].render(objMerge(state, {form: {show: false}}));
+            bridge[TODO.getParentID(state.parentState.itemObj.ID)].render(); //no args means to state mutation
+            return;
         }
 
         if (fields) {
@@ -152,35 +156,25 @@ export default function Form(props) {
                     fields[name].value = field.children[0].value;
                 }
             });
+
+            if (action == FORM_MODE.create) {
+                //- blindly trandporting properties over to the factory function
+                TODO.create(
+                    state.parentState.itemObj.childType,
+                    state.parentState.itemObj.ID,
+                    deepClone(form.fields.child)
+                );
+            } else if (action == FORM_MODE.edit) {
+                TODO.modifyItem(state.parentState.itemObj.ID, form.fields.self);
+            }
+
+            //! this step could be removed
+            state.parentState.form.fields = deepClone(form.fields.self);
         }
 
-        if (action == FORM_MODE.create) {
-            //! blindly trandporting properties over to the factory function
-            TODO.create(
-                state.parentState.itemObj.childType,
-                state.parentState.itemObj.ID,
-                deepClone(form.fields.child)
-            );
-        } else if (action == FORM_MODE.edit) {
-            TODO.modifyItem(state.parentState.itemObj.ID, form.fields.self);
-        } else if (action == FORM_MODE.delete) {
-            TODO.deleteItemByID(state.parentState.itemObj.ID);
-            //! the objMerge works because the render function overrides the itemObj to be a reference
-            // bridge[state.itemName].render(objMerge(state, {form: {show: false}}));
-            bridge[TODO.getParentID(state.parentState.itemObj.ID)].render(); //no args means to state mutation
-            return;
-        }
+        state.parentState.form.show = false;
 
-        bridge[state.parentState.itemObj.ID].render(
-            objMerge(state.parentState, {
-                form: {
-                    show: false,
-                    fields: {
-                        self: deepClone(form.fields.self),
-                    },
-                },
-            })
-        );
+        bridgeState(props.ID, state.parentState);
     };
 
     const listFields = () => {
@@ -188,14 +182,20 @@ export default function Form(props) {
             state.parentState.form.mode == 'edit'
                 ? state.parentState.form.fields.self
                 : state.parentState.form.fields.child;
-        // console.log('fields', fields);
+        // console.log('form', state.parentState.form);
         return Object.keys(fields).map((fieldKey) => {
             const field = fields[fieldKey];
             // console.log('field', field);
             if (field.type == 'tags') {
                 return (
                     <div name={field.type} data-type={field.type} key={field.type}>
-                        <button key={fieldKey} onClick={showSubForm.bind(this, field.type, field.value)}>
+                        <button
+                            key={fieldKey}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                showSubForm(field.type, field.value);
+                            }}
+                        >
                             Add Tags
                         </button>
                         {field.value.map((tag) => (
@@ -231,7 +231,13 @@ export default function Form(props) {
 
     return (
         <>
-            <div className="overlay" onClick={formAction.bind(this, FORM_MODE.cancel)}>
+            <div
+                className="overlay"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    formAction(FORM_MODE.cancel, e);
+                }}
+            >
                 <div style={style.pannel} data-parent-id={state.parentState.itemObj.ID}>
                     <h2 style={style.pannel.h2}>{state.parentState.form.title} </h2>
 
@@ -244,7 +250,10 @@ export default function Form(props) {
                     <div style={style.pannel.buttons}>
                         <button
                             style={style.pannel.buttons.button}
-                            onClick={formAction.bind(this, state.parentState.form.mode)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                formAction(state.parentState.form.mode, e);
+                            }}
                         >
                             {state.parentState.form.submit}
                         </button>
@@ -252,9 +261,7 @@ export default function Form(props) {
                             style={style.pannel.buttons.button}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                bridge[state.parentState.itemObj.ID].render(
-                                    objMerge(state.parentState, {form: {show: false}})
-                                );
+                                formAction(FORM_MODE.cancel, e);
                             }}
                         >
                             Cancel
@@ -264,7 +271,10 @@ export default function Form(props) {
                         {state.parentState.form.mode != 'create' ? (
                             <button
                                 style={style.pannel.buttons.button}
-                                onClick={formAction.bind(this, FORM_MODE.delete)}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    formAction(FORM_MODE.delete, e);
+                                }}
                             >
                                 Delete
                             </button>

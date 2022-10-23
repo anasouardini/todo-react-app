@@ -59,7 +59,7 @@ const Goal = (props) => {
                     style={style.parent.header.edit}
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu({setState, state});
+                        showMenu(state.itemObj.ID);
                     }}
                 >
                     ...
@@ -82,9 +82,9 @@ const Goal = (props) => {
             </div>
 
             {/* Menu */}
-            {renderMenu({state, setState})}
-            {/* Form */}
-            {renderForm({state, setState})}
+            {renderMenu(state.menu.show, state.itemObj.ID)}
+            {/* form */}
+            {renderForm(state.form.show, state.itemObj.ID)}
         </div>
     );
 };

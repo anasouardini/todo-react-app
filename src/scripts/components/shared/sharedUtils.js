@@ -1,44 +1,38 @@
-import {React, TODO, deepClone, FORM_MODE, showForm} from '../../imports/tools';
+import {React, TODO, deepClone, FORM_MODE, showForm, bridge} from '../../imports/tools';
 import {Form, ItemMenu} from '../../imports/components';
 
-export const renderForm = ({state, setState}) => {
-    if (state.form.show) {
-        return (
-            <Form
-                //! this shit show need to be fixed
-                parentState={state}
-            />
-        );
+export const renderForm = (show, ID) => {
+    if (show) {
+        // console.log('render form state', bridge[ID].state);
+        const parentState = deepClone(bridge[ID].state);
+        return <Form ID={ID} />;
     } else {
         return <></>;
     }
 };
 
-export const renderMenu = ({state, setState}) => {
-    if (state.menu.show) {
+export const renderMenu = (show, ID) => {
+    if (show) {
+        const parentState = deepClone(bridge[ID].state);
         return (
             <ItemMenu
-                parentState={state}
-                // showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)}
-                showForm={(...args) => {
-                    showForm(state.itemObj.ID, FORM_MODE.edit, ...args);
+                ID={ID}
+                showForm={() => {
+                    showForm(parentState.itemObj.ID, FORM_MODE.edit);
                 }}
             />
         );
     } else {
-        console.log('render menu show ', state.menu.show);
+        // console.log('render menu show ', parentState.menu.show);
         return <></>;
     }
 };
 
-export const showMenu = ({state, setState}) => {
-    setState({
-        ...deepClone(state),
-        menu: {
-            ...deepClone(state.menu),
-            show: true,
-        },
-    });
+export const showMenu = (ID) => {
+    const parentState = deepClone(bridge[ID].state);
+
+    parentState.menu.show = true;
+    bridge[ID].render(parentState);
 };
 
 export const sharedState = (itemObj, parentName, itemName) => {

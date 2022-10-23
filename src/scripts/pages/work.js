@@ -49,9 +49,9 @@ export default function Work(props) {
             <div>{listChildren(state.itemObj.children, Workflow)}</div>
 
             {/* Menu */}
-            {renderMenu({state, setState})}
-            {/* Form */}
-            {renderForm({state, setState})}
+            {renderMenu(state.menu.show, state.itemObj.ID)}
+            {/* form */}
+            {renderForm(state.form.show, state.itemObj.ID)}
         </div>
     );
 }

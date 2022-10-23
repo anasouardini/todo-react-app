@@ -17,9 +17,11 @@ import {Tag} from '../../imports/components';
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj, 'Goal', 'SubGoal'));
 
+    // console.log('subgoal', state.form);
     useEffect(() => {
         initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
+            // console.log('state after mutate', state);
             setState({
                 ...newStateCpy,
                 itemObj: props.itemObj,
@@ -58,7 +60,7 @@ const SubGoal = (props) => {
                 <span
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu({setState, state});
+                        showMenu(state.itemObj.ID);
                     }}
                     style={style.parent.edit}
                 >
@@ -67,9 +69,9 @@ const SubGoal = (props) => {
             </div>
 
             {/* Menu */}
-            {renderMenu({state, setState})}
-            {/* Form */}
-            {renderForm({state, setState})}
+            {renderMenu(state.menu.show, state.itemObj.ID)}
+            {/* form */}
+            {renderForm(state.form.show, state.itemObj.ID)}
         </>
     );
 };

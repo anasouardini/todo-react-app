@@ -63,7 +63,7 @@ export default function Project(props) {
                 style={style.project.edit}
                 onClick={(e) => {
                     e.stopPropagation();
-                    showMenu({setState, state});
+                    showMenu(state.itemObj.ID);
                 }}
             >
                 ...
@@ -71,9 +71,9 @@ export default function Project(props) {
             <p style={{marginTop: '.5rem'}}>{state.itemObj.fields.desc.value}</p>
 
             {/* Menu */}
-            {renderMenu({state, setState})}
+            {renderMenu(state.menu.show, state.itemObj.ID)}
             {/* form */}
-            {renderForm({state, setState})}
+            {renderForm(state.form.show, state.itemObj.ID)}
         </div>
     );
 }

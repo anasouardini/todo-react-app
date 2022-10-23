@@ -1,7 +1,7 @@
 ## CODE
 
--   FIX: tags are not synced
-
+-   consider adding conditionalRendering function, for form, menu, etc
+-   mutate the deep copy instead of merging the changes with state
 -   use useRef instead of document.methods
 -   add DnD
 -   try to split states into smaller states (form doesn't need to set fields in state, just mutate the global obj and render, the separate form state will get changes from the itemObj state)
