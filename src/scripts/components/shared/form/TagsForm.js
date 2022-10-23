@@ -1,8 +1,5 @@
-import React, {useState} from 'react';
-import TODO from '../../../todoModule';
-import deepClone from '../../../tools/deepClone';
-
-import Tag from '../tag';
+import {React, useState, TODO, deepClone} from '../../../imports/tools';
+import {Tag} from '../../../imports/components';
 
 export default function TagsForm(props) {
     const [state, setState] = useState({

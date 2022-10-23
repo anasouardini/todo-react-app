@@ -1,6 +1,4 @@
-import React, {useState} from 'react';
-import objMerge from '../../tools/objMerge';
-import {bridge} from './bridger';
+import {React, useState, objMerge, bridge} from '../../imports/tools';
 
 export default function ItemMenu(props) {
     const [state, setState] = useState({

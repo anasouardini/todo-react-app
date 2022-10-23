@@ -1,5 +1,5 @@
 export const bridge = {};
 
-export const initBridge = (projName, render = () => {}) => {
-    bridge[projName] = {render};
+export const initBridge = (projID, state, render = () => {}) => {
+    bridge[projID] = {state, render};
 };

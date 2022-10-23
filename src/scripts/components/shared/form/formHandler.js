@@ -1,35 +1,28 @@
-import objMerge from '../../../tools/objMerge';
-import {bridge} from '../bridger';
+import {objMerge, bridge, deepClone} from '../../../imports/tools';
 
-const formHandler = (() => {
-    const FORM_MODE = {create: 'create', edit: 'edit', delete: 'delete', cancel: 'cancel'};
+const FORM_MODE = {create: 'create', edit: 'edit', delete: 'delete', cancel: 'cancel'};
 
-    const showForm = ({setState, state}, mode) => {
-        // console.log('state', state);
+const showForm = (ID, mode) => {
+    // console.log('state', state);
+    const parentState = deepClone(bridge[ID].state); //deepCloning to be extra safe
 
-        const newState = {
-            form: {
-                show: true,
-                mode,
-                title:
-                    mode == FORM_MODE.create
-                        ? `create a new ${state.itemObj.childType}`
-                        : `${state.itemObj.type}: ${state.form.fields.self.title.value}`,
-                submit: mode,
-            },
-            menu: {
-                show: false,
-            },
-        };
-
-        console.log(state.itemName);
-        bridge[state.itemObj.ID].render(objMerge(state, newState), true);
-
-        //! causes a render issue since the itemObj is not a reference
-        // setState(objMerge(state, newState));
+    const newState = {
+        form: {
+            show: true,
+            mode,
+            title:
+                mode == FORM_MODE.create
+                    ? `create a new ${parentState.itemObj.childType}`
+                    : `${parentState.itemObj.type}: ${parentState.form.fields.self.title.value}`,
+            submit: mode,
+        },
+        menu: {
+            show: false,
+        },
     };
 
-    return {FORM_MODE, showForm};
-})();
+    // console.log(parentState.itemName);
+    bridge[parentState.itemObj.ID].render(objMerge(parentState, newState));
+};
 
-export default formHandler;
+export {showForm, FORM_MODE};

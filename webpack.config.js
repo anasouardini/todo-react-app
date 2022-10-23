@@ -17,6 +17,15 @@ module.exports = {
         clean: true,
         assetModuleFilename: 'assets/images/[name]_[hash][ext]',
     },
+    resolve: {
+        alias: {
+            root: path.resolve(__dirname, 'src/scripts/'),
+            components: path.resolve(__dirname, 'src/scripts/components'),
+            pages: path.resolve(__dirname, 'src/scripts/pages'),
+            imports: path.resolve(__dirname, 'src/scripts/imports/'),
+        },
+    },
+
     devtool: 'source-map',
     module: {
         rules: [

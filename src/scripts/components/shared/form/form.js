@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import formHandler from './formHandler';
-const {FORM_MODE} = formHandler;
-import deepClone from '../../../tools/deepClone';
-
-import TODO from '../../../todoModule';
-
-import TagsForm from './TagsForm';
-import Tag from '../tag';
-import {bridge} from '../bridger';
-import objMerge from '../../../tools/objMerge';
+import {
+    React,
+    useEffect,
+    useState,
+    FORM_MODE,
+    deepClone,
+    TODO,
+    bridge,
+    objMerge,
+} from '../../../imports/tools';
+import {TagsForm, Tag} from '../../../imports/components';
 
 export default function Form(props) {
     //! FIX: unify the copy of the parent state

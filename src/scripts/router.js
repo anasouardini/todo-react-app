@@ -4,7 +4,7 @@ import MainLayout from './components/shared/mainLayout';
 
 import Home from './pages/home';
 import Work from './pages/work';
-import Project from './pages/project';
+import Project from './pages/projectPage';
 
 export default function Router() {
     // console.log('router');

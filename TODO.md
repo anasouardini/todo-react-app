@@ -1,5 +1,11 @@
 ## CODE
 
+-   FIX: tags are not synced
+
+-   use useRef instead of document.methods
+-   add DnD
+-   try to split states into smaller states (form doesn't need to set fields in state, just mutate the global obj and render, the separate form state will get changes from the itemObj state)
+-   think about adding ID to workObj(allows making render function more geniric)
 -   add state to bridge
 -   create state store with references to setState functions... etc
 -   tailwind

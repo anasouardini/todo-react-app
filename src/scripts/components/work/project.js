@@ -1,15 +1,23 @@
-import React, {useState, useEffect} from 'react';
-import {Link} from 'react-router-dom';
-import formHandler from '../shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, showMenu, renderMenu, renderForm} from '../shared/sharedUtils';
-import Tag from '../shared/tag';
-import {initBridge} from '../shared/bridger';
+import {
+    React,
+    useState,
+    useEffect,
+    Link,
+    FORM_MODE,
+    showForm,
+    sharedState,
+    showMenu,
+    renderMenu,
+    renderForm,
+    initBridge,
+} from '../../imports/tools';
+import {Tag} from '../../imports/components';
+
 export default function Project(props) {
     const [state, setState] = useState(sharedState(props.itemObj, 'Workflow', 'Project'));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,

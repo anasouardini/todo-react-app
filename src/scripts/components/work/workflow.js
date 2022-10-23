@@ -1,14 +1,23 @@
-import React, {useEffect, useState} from 'react';
-import Project from './project';
-import formHandler from '../shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, showMenu, renderMenu, listChildren, renderForm} from '../shared/sharedUtils';
-import {initBridge} from '../shared/bridger';
+import {
+    React,
+    useEffect,
+    useState,
+    FORM_MODE,
+    showForm,
+    sharedState,
+    showMenu,
+    renderMenu,
+    listChildren,
+    renderForm,
+    initBridge,
+} from '../../imports/tools';
+import {Project} from '../../imports/components';
+
 export default function Workflow(props) {
     const [state, setState] = useState(sharedState(props.itemObj, 'WorkPage', 'Workflow'));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -68,7 +77,9 @@ export default function Workflow(props) {
             {/* new project button*/}
             <div
                 style={style.parent.addItem}
-                onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.create)}
+                onClick={(e) => {
+                    showForm(state.itemObj.ID, FORM_MODE.create);
+                }}
             >
                 ADD ITEM
             </div>

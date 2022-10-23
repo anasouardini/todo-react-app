@@ -1,19 +1,25 @@
-import React, {Component, useState, useEffect} from 'react';
+import {
+    React,
+    useEffect,
+    useState,
+    TODO,
+    FORM_MODE,
+    showForm,
+    sharedState,
+    renderMenu,
+    listChildren,
+    showMenu,
+    renderForm,
+    initBridge,
+} from '../../imports/tools';
 
-import SubGoal from './subgoal';
-
-import TODO from '../../todoModule';
-import formHandler from '../shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, listChildren, showMenu, renderMenu, renderForm} from '../shared/sharedUtils';
-import Tag from '../shared/tag';
-import {initBridge} from '../shared/bridger';
+import {SubGoal, Tag} from '../../imports/components';
 
 const Goal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj, 'ProjectPage', 'Goal'));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -68,7 +74,9 @@ const Goal = (props) => {
                 className="add-card-btn add-new-subgoal"
                 data-id={state.itemObj.ID}
                 style={{order: '999999'}}
-                onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.create)}
+                onClick={(e) => {
+                    showForm(state.itemObj.ID, FORM_MODE.create);
+                }}
             >
                 <p style={{pointerEvents: 'none', display: 'inline'}}>Add a New Card</p>
             </div>

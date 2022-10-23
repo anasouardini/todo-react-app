@@ -1,17 +1,25 @@
-import React, {useEffect, useState} from 'react';
-import TODO from '../todoModule';
-import {Link} from 'react-router-dom';
-import Workflow from '../components/work/workflow';
-import formHandler from '../components/shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, listChildren, renderForm, renderMenu} from '../components/shared/sharedUtils';
-import {initBridge} from '../components/shared/bridger';
+import {
+    TODO,
+    React,
+    useEffect,
+    useState,
+    Link,
+    sharedState,
+    listChildren,
+    renderForm,
+    renderMenu,
+    showForm,
+    FORM_MODE,
+    initBridge,
+} from '../imports/tools';
+import {Workflow} from '../imports/components';
+
 export default function Work(props) {
     const [state, setState] = useState(sharedState(TODO.getWork(), '', 'WorkPage'));
     console.log(state.itemObj.children);
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
@@ -30,7 +38,11 @@ export default function Work(props) {
 
     return (
         <div style={style.parent}>
-            <button onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.create)}>
+            <button
+                onClick={(e) => {
+                    showForm(state.itemObj.ID, FORM_MODE.create);
+                }}
+            >
                 New Workflow
             </button>
 

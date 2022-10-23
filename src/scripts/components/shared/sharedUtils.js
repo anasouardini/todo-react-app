@@ -1,11 +1,5 @@
-import React from 'react';
-import TODO from '../../todoModule';
-import deepClone from '../../tools/deepClone';
-
-import Form from './form/form';
-import formHandler from './form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import ItemMenu from './itemMenu';
+import {React, TODO, deepClone, FORM_MODE, showForm} from '../../imports/tools';
+import {Form, ItemMenu} from '../../imports/components';
 
 export const renderForm = ({state, setState}) => {
     if (state.form.show) {
@@ -23,7 +17,13 @@ export const renderForm = ({state, setState}) => {
 export const renderMenu = ({state, setState}) => {
     if (state.menu.show) {
         return (
-            <ItemMenu parentState={state} showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)} />
+            <ItemMenu
+                parentState={state}
+                // showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)}
+                showForm={(...args) => {
+                    showForm(state.itemObj.ID, FORM_MODE.edit, ...args);
+                }}
+            />
         );
     } else {
         console.log('render menu show ', state.menu.show);

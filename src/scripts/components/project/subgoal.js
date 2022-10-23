@@ -1,16 +1,24 @@
-import React, {useState, useEffect} from 'react';
-import Tag from '../shared/tag';
-import TODO from '../../todoModule';
-import formHandler from '../shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, sharedRenerer, renderForm, showMenu} from '../shared/sharedUtils';
-import {renderMenu} from '../shared/sharedUtils';
-import {initBridge, bridge} from '../shared/bridger';
+import {
+    React,
+    useState,
+    useEffect,
+    TODO,
+    FORM_MODE,
+    showForm,
+    sharedState,
+    renderForm,
+    showMenu,
+    renderMenu,
+    initBridge,
+    bridge,
+} from '../../imports/tools';
+import {Tag} from '../../imports/components';
+
 const SubGoal = (props) => {
     const [state, setState] = useState(sharedState(props.itemObj, 'Goal', 'SubGoal'));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState = undefined) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,

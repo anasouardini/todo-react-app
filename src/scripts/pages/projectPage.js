@@ -1,24 +1,33 @@
-import React, {Component, useEffect, useState} from 'react';
-import {useParams, Link} from 'react-router-dom';
-import TODO from '../todoModule';
-import Goal from '../components/project/goal';
-import formHandler from '../components/shared/form/formHandler';
-const {FORM_MODE, showForm, formAction} = formHandler;
-import {sharedState, renderMenu, listChildren, renderForm} from '../components/shared/sharedUtils';
-import {initBridge} from '../components/shared/bridger';
+import {
+    React,
+    useEffect,
+    useState,
+    Link,
+    useParams,
+    TODO,
+    FORM_MODE,
+    showForm,
+    sharedState,
+    renderMenu,
+    listChildren,
+    renderForm,
+    initBridge,
+} from '../imports/tools';
 
-export default function Project() {
+import {Goal} from '../imports/components';
+
+export default function ProjectPage() {
     const {ID} = useParams();
     const [state, setState] = useState(sharedState(TODO.getItemByID(ID), '', 'ProjectPage'));
 
     useEffect(() => {
-        initBridge(state.itemObj.ID, (newState = undefined) => {
+        initBridge(state.itemObj.ID, state, (newState) => {
             let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
                 itemObj: TODO.getItemByID(ID),
             });
-            console.log(newState);
+            // console.log(newState);
         });
     }, []);
 
@@ -48,7 +57,10 @@ export default function Project() {
                         className="cards-container empty-cards-container add-new-goal"
                         data-id={state.itemObj.ID}
                         style={{order: '999999', cursor: 'pointer'}}
-                        onClick={formHandler.showForm.bind(this, {setState, state}, FORM_MODE.create)}
+                        // onClick={showForm.bind(this, {setState, state}, FORM_MODE.create)}
+                        onClick={(e) => {
+                            showForm(state.itemObj.ID, FORM_MODE.create);
+                        }}
                     >
                         <div style={{order: '999999', pointerEvents: 'none'}} className="add-goal-btn">
                             <p style={{display: 'inline'}}>Add a New Goal</p>
