@@ -1,5 +1,6 @@
 ## CODE
 
+-   post pone this
 -   use useRef instead of dom manipulation methods
 -   try to split state into smaller states (the separate form state will get changes from the itemObj state)
 
