@@ -1,0 +1,14 @@
+/*===========================================
+================ CHUNK: BASE/RTYPOGRAPHY
+===========================================*/
+
+@font-face{
+    font-family: "Roboto";
+    src: url("../assets/fonts/roboto/Roboto-Regular.ttf")
+}
+
+html{
+    font-size: min(calc(1rem + 6 * (20vw / 680)), 1.35rem);
+    font-family: "Roboto", sans-serif;
+    color: #444;
+}

@@ -1,0 +1,34 @@
+/*===========================================
+================ CHUNK: BASE/RESET
+===========================================*/
+
+
+@use "../abstracts" as abstracts;
+
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    scroll-behavior: smooth;
+    min-height: 100vh;
+}
+
+button, input, select, textarea {
+    width : 190px;
+}
+
+p{
+    max-width: 550px;
+}
+
+a,
+a:active,
+a:hover,
+a:visited{
+    text-decoration: none;
+    color: abstracts.$main-clr;
+}
