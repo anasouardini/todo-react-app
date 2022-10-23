@@ -1,13 +1,13 @@
 const Bridges = {};
 
-const setState = (componentID, bridge, newState) => {
+const setState = (componentID, stateName, newState) => {
     if (newState) {
-        Bridges[componentID][bridge].state = newState;
+        Bridges[componentID][stateName].state = newState;
     }
-    Bridges[componentID][bridge].render(Bridges[componentID][bridge].state);
+    Bridges[componentID][stateName].render(Bridges[componentID][stateName].state);
 };
 
-const getState = (componentID, bridge) => Bridges[componentID][bridge].state;
+const getState = (componentID, stateName) => Bridges[componentID][stateName].state;
 
 const initBridge = (componentID, bridgesObj) => {
     if (!bridgesObj?.render) {
@@ -20,5 +20,3 @@ const initBridge = (componentID, bridgesObj) => {
 };
 
 export const Bridge = {initBridge, getState, setState};
-
-//TODO: separate states, and pass setState as the CB

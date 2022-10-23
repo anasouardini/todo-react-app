@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import MainLayout from './components/shared/mainLayout';
 
