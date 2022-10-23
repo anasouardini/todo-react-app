@@ -1,6 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
+import objMerge from '../../tools/objMerge';
+import {bridge} from './bridger';
 
 export default function ItemMenu(props) {
+    const [state, setState] = useState({
+        parentState: props.parentState,
+    });
+
     const style = {
         menu: {
             background: 'white',
@@ -22,16 +28,28 @@ export default function ItemMenu(props) {
 
     return (
         <>
-            <div onClick={null} className="overlay"></div>
+            <div
+                onClick={(e) => {
+                    e.stopPropagation();
+                    // bridge[props.state.itemName].render(objMerge(props.state, {menu: {show: false}}));
+                    bridge[state.parentState.itemObj.ID].render();
+                }}
+                className="overlay"
+            ></div>
             <div style={style.menu}>
-                <div>{props.itemObj.type}</div>
                 <div style={style.menu.item} onClick={null}>
                     sort by
                 </div>
                 <div style={style.menu.item} onClick={null}>
                     delete
                 </div>
-                <div style={style.menu.item} onClick={props.showForm}>
+                <div
+                    style={style.menu.item}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        props.showForm;
+                    }}
+                >
                     edit
                 </div>
             </div>

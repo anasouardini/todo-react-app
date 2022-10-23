@@ -10,13 +10,12 @@ export default function Workflow(props) {
     //? need to overcome the strict mode
     // const componentName = arguments.callee.name;
     useEffect(() => {
-        const render = (newState) => {
+        initBridge(state.itemObj.ID, (newState) => {
             setState({
                 ...newState,
                 itemObj: props.itemObj,
             });
-        };
-        initBridge('Workflow', render);
+        });
     }, []);
 
     const style = {

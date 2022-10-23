@@ -14,15 +14,14 @@ export default function Project() {
     //? need to overcome the strict mode
     // const componentName = arguments.callee.name;
     useEffect(() => {
-        const render = (newState = {}, mutate = false) => {
+        initBridge(state.itemObj.ID, (newState = {}, mutate = false) => {
             let newStateCpy = mutate ? newState : state;
             setState({
                 ...newStateCpy,
                 itemObj: TODO.getItemByID(ID),
             });
             console.log(newState);
-        };
-        initBridge('ProjectPage', render);
+        });
     }, []);
 
     if (state.itemObj) {

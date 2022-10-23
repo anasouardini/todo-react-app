@@ -12,7 +12,7 @@ const SubGoal = (props) => {
     //? need to overcome the strict mode
     // const componentName = arguments.callee.name;
     useEffect(() => {
-        initBridge('SubGoal', (newState = {}, mutate = false) => {
+        initBridge(state.itemObj.ID, (newState = {}, mutate = false) => {
             let newStateCpy = mutate ? newState : state;
             setState({
                 ...newStateCpy,

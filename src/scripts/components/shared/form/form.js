@@ -7,9 +7,11 @@ import TODO from '../../../todoModule';
 
 import TagsForm from './TagsForm';
 import Tag from '../tag';
+import {bridge} from '../bridger';
+import objMerge from '../../../tools/objMerge';
 
 export default function Form(props) {
-    //! FIX: this component renders twi times
+    //! FIX: unify the copy of the parent state
     const [state, setState] = useState({
         subForms: {
             show: '',
@@ -17,13 +19,7 @@ export default function Form(props) {
                 value: [],
             },
         },
-        parentState: {
-            itemObj: deepClone(props.itemObj),
-            form: {
-                ...props.form,
-                fields: deepClone(props.form.fields),
-            },
-        },
+        parentState: deepClone(props.parentState),
     });
 
     const subFormsResolver = {
@@ -158,12 +154,32 @@ export default function Form(props) {
             });
         }
 
-        props.action(
-            {
-                itemObj: state.parentState.itemObj,
-                form: form,
-            },
-            action
+        if (action == FORM_MODE.create) {
+            //! blindly trandporting properties over to the factory function
+            TODO.create(
+                state.parentState.itemObj.childType,
+                state.parentState.itemObj.ID,
+                deepClone(form.fields.child)
+            );
+        } else if (action == FORM_MODE.edit) {
+            TODO.modifyItem(state.parentState.itemObj.ID, form.fields.self);
+        } else if (action == FORM_MODE.delete) {
+            TODO.deleteItemByID(state.parentState.itemObj.ID);
+            //! the objMerge works because the render function overrides the itemObj to be a reference
+            // bridge[state.itemName].render(objMerge(state, {form: {show: false}}));
+            bridge[state.parentState.parentName].render(); //no args means to state mutation
+            return;
+        }
+
+        bridge[state.parentState.itemObj.ID].render(
+            objMerge(state.parentState, {
+                form: {
+                    show: false,
+                    fields: {
+                        self: deepClone(form.fields.self),
+                    },
+                },
+            })
         );
     };
 
@@ -234,7 +250,12 @@ export default function Form(props) {
                         </button>
                         <button
                             style={style.pannel.buttons.button}
-                            onClick={formAction.bind(this, FORM_MODE.cancel)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                bridge[state.parentState.itemObj.ID].render(
+                                    objMerge(state.parentState, {form: {show: false}})
+                                );
+                            }}
                         >
                             Cancel
                         </button>

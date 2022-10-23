@@ -13,13 +13,12 @@ export default function Work(props) {
     //? need to overcome the strict mode
     // const componentName = arguments.callee.name;
     useEffect(() => {
-        const render = (newState) => {
+        initBridge(state.itemObj.ID, (newState) => {
             setState({
                 ...newState,
                 itemObj: TODO.getWork(),
             });
-        };
-        initBridge('WorkPage', render);
+        });
     }, []);
 
     const style = {

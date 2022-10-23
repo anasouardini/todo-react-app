@@ -7,31 +7,26 @@ import formHandler from './form/formHandler';
 const {FORM_MODE, showForm, formAction} = formHandler;
 import ItemMenu from './itemMenu';
 
-export const renderForm = ({state, setState}) =>
-    state.form.show ? (
-        <Form
-            action={formAction.bind(this, {
-                setState,
-                state,
-            })}
-            itemObj={state.itemObj}
-            form={state.form}
-        />
-    ) : (
-        <></>
-    );
-
-export const renderMenu = ({state, setState}) => {
-    console.log('render menu show ', state.menu.show);
-    if (state.menu.show) {
+export const renderForm = ({state, setState}) => {
+    if (state.form.show) {
         return (
-            <ItemMenu
-                showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)}
-                itemObj={state.itemObj}
-                form={state.form}
+            <Form
+                //! this shit show need to be fixed
+                parentState={state}
             />
         );
     } else {
+        return <></>;
+    }
+};
+
+export const renderMenu = ({state, setState}) => {
+    if (state.menu.show) {
+        return (
+            <ItemMenu parentState={state} showForm={showForm.bind(this, {setState, state}, FORM_MODE.edit)} />
+        );
+    } else {
+        console.log('render menu show ', state.menu.show);
         return <></>;
     }
 };

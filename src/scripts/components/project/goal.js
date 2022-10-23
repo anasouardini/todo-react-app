@@ -15,15 +15,14 @@ const Goal = (props) => {
     //? need to overcome the strict mode
     // const componentName = arguments.callee.name;
     useEffect(() => {
-        const render = (newState = {}, mutate = false) => {
-            let newStateCpy = mutate ? newState : state;
+        initBridge(state.itemObj.ID, (newState = undefined) => {
+            let newStateCpy = newState ?? state;
             setState({
                 ...newStateCpy,
                 itemObj: props.itemObj,
             });
             console.log('goal state', newStateCpy);
-        };
-        initBridge('Goal', render);
+        });
     }, []);
 
     const style = {
@@ -76,6 +75,7 @@ const Goal = (props) => {
             >
                 <p style={{pointerEvents: 'none', display: 'inline'}}>Add a New Card</p>
             </div>
+
             {/* Menu */}
             {renderMenu({state, setState})}
             {/* Form */}
