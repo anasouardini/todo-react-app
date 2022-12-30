@@ -1,0 +1,159 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DBURL")
+}
+
+model Users {
+  username String @id @unique @db.VarChar(50)
+  passhash String
+
+  Workflows Workflows[]
+  Projects  Projects[]
+  Goals     Goals[]
+  Subgoals  Subgoals[]
+  Tags      Tags[]
+  Profiles  Profiles[]
+}
+
+model Profiles {
+  username String @unique @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  firstName     String
+  lastName      String
+  emailAddress  String
+  emailVerified Int    @db.TinyInt
+  avatar        String
+}
+
+model Logs {
+  id       String   @unique @default(uuid())
+  username String   @db.VarChar(50)
+  date     DateTime
+  type     String
+  msg      String
+}
+
+model Workflows {
+  id String @id @unique @default(uuid())
+
+  username String @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  type  String
+  title String
+  desc  String?
+  notes String?
+
+  children Projects[]
+}
+
+model Projects {
+  id String @unique @default(uuid())
+
+  parent    String
+  parentRel Workflows @relation(fields: [parent], references: [id], onDelete: Cascade)
+
+  username String @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  type       String
+  title      String
+  desc       String?
+  notes      String?
+  createDate DateTime  @default(now())
+  dueDate    DateTime?
+  order      Int
+  priority   Int       @default(1) @db.SmallInt
+  tagsIDs    Json
+
+  children Goals[]
+
+  @@id([id])
+  @@unique([parent, order])
+}
+
+model Goals {
+  id        String   @default(uuid())
+  parent    String
+  parentRel Projects @relation(fields: [parent], references: [id], onDelete: Cascade)
+
+  username String @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  type       String
+  title      String
+  desc       String?
+  notes      String?
+  createDate DateTime  @default(now())
+  dueDate    DateTime?
+  order      Int
+  priority   Int       @default(1) @db.SmallInt
+  tagsIDs    Json
+
+  children Subgoals[]
+
+  @@id([id])
+  @@unique([parent, order])
+}
+
+model Subgoals {
+  id        String @default(uuid())
+  parent    String
+  parentRel Goals  @relation(fields: [parent], references: [id], onDelete: Cascade)
+
+  username String @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  type       String
+  title      String
+  desc       String?
+  notes      String?
+  createDate DateTime  @default(now())
+  dueDate    DateTime?
+  order      Int
+  priority   Int       @default(1) @db.SmallInt
+  tagsIDs    Json
+
+  @@id([id])
+  @@unique([parent, order])
+}
+
+//- list of relations to tags columns in each component would be better
+model Tags {
+  username String @db.VarChar(50)
+  userRel  Users  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  id      String @id @unique @default(uuid())
+  fontclr String @db.VarChar(10)
+  bgclr   String @db.VarChar(10)
+  text    String
+  bgimg   String
+
+  // insert into Tags (username, fontclr, bgclr, text, bgimg) values ('bliyla', 'black','red','done','')
+
+  @@unique([fontclr, bgclr])
+}
+
+//! too much complication
+// model TagsRel {
+//   projectID String?
+//   project   Projects? @relation(fields: [projectID], references: [id])
+
+//   goalID String?
+//   goal   Goals?  @relation(fields: [goalID], references: [id])
+
+//   subgoalID String?
+//   subgoal   Subgoals? @relation(fields: [subgoalID], references: [id])
+
+//   tagID String
+//   tag   Tags    @relation(fields: [tagID], references: [id], onDelete: Cascade)
+//   text  String?
+//   bgimg String?
+
+//   @@id([tagID])
+// }

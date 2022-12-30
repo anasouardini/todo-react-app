@@ -2,7 +2,7 @@
 	"scripts": {
 		"devbuild": "webpack --mode=development",
 		"probuild": "webpack --mode=production",
-		"serve": "webpack serve",
+		"dev": "webpack serve",
 		"clean": "rm -rf dist",
 		"test": "jest --env=jsdom"
 	},
