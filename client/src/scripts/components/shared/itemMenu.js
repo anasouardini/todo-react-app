@@ -7,7 +7,7 @@ export default function ItemMenu(props) {
 
     const style = {
         menu: {
-            background: 'white',
+            // background: 'white',
             boxShadow: 'rgba(3, 102, 214, 0.3) 0px 0px 0px 3px',
             position: 'fixed',
             top: '50%',

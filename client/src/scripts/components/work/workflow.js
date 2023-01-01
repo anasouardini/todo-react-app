@@ -11,6 +11,7 @@ import {
     renderForm,
     Bridge,
 } from '../../imports/tools';
+import {FaPlus, FaPencilAlt} from 'react-icons/fa';
 import {Project} from '../../imports/components';
 
 export default function Workflow(props) {
@@ -41,21 +42,26 @@ export default function Workflow(props) {
             marginTop: '2rem',
             // boxShadow: 'rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset',
 
+            titleContainer: {display: 'flex', justifyContent: 'space-between', marginBottom: '20px'},
             title: {
                 position: 'relative',
                 width: 'max-content',
 
                 edit: {
+                    fontSize: '1.3rem',
                     cursor: 'pointer',
                     position: 'absolute',
-                    top: '-6px',
-                    right: '-35px',
+                    top: '-1px',
+                    right: '-45px',
+                    color: 'rgb(40, 150, 200)',
                 },
             },
 
             addItem: {
                 width: 'max-content',
                 cursor: 'pointer',
+                color: 'rgb(40, 150, 200)',
+                fontSize: '1.3rem'
             },
 
             list: {
@@ -69,28 +75,30 @@ export default function Workflow(props) {
 
     return (
         <div style={style.parent}>
-            <h2 style={style.parent.title}>
-                {state.itemObj.fields.title.value}
+            <div style={style.parent.titleContainer}>
+                <h2 style={style.parent.title}>
+                    {state.itemObj.fields.title.value}
+                    <div
+                        style={style.parent.title.edit}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            showMenu(state.itemObj.id);
+                        }}
+                    >
+                        <FaPencilAlt />
+                    </div>
+                </h2>
+
+                {/* new project button*/}
                 <div
-                    style={style.parent.title.edit}
+                    style={style.parent.addItem}
                     onClick={(e) => {
                         e.stopPropagation();
-                        showMenu(state.itemObj.id);
+                        showForm(state.itemObj.id, FORM_MODE.create);
                     }}
                 >
-                    ...
+                    <FaPlus />
                 </div>
-            </h2>
-
-            {/* new project button*/}
-            <div
-                style={style.parent.addItem}
-                onClick={(e) => {
-                    e.stopPropagation();
-                    showForm(state.itemObj.id, FORM_MODE.create);
-                }}
-            >
-                ADD ITEM
             </div>
 
             <div style={style.parent.list}>{listChildren(state.itemObj, Project)}</div>

@@ -1,6 +1,5 @@
 const path = require('path');
 const htmlWebpackPlugin = require('html-webpack-plugin');
-const {Hash} = require('react-router-dom');
 // const eslintWebpackPlugin = require('eslint-webpack-plugin');
 
 require('dotenv').config();

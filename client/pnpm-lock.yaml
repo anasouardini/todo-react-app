@@ -25,6 +25,7 @@ specifiers:
   postcss-preset-env: ^7.7.1
   react: ^18.2.0
   react-dom: ^18.2.0
+  react-icons: ^4.7.1
   react-router-dom: ^6.3.0
   sass: ^1.52.3
   sass-loader: ^13.0.0
@@ -39,6 +40,7 @@ dependencies:
   dotenv: 16.0.2
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-icons: 4.7.1_react@18.2.0
 
 devDependencies:
   '@babel/core': 7.18.5
@@ -62,7 +64,7 @@ devDependencies:
   sass: 1.52.3
   sass-loader: 13.0.0_sass@1.52.3+webpack@5.73.0
   style-loader: 3.3.1_webpack@5.73.0
-  tailwindcss: 3.1.8
+  tailwindcss: 3.1.8_postcss@8.4.14
   webpack: 5.73.0_webpack-cli@4.10.0
   webpack-cli: 4.10.0_hnfkmnck6ti4dm6ulhhz44v2ju
   webpack-dev-server: 4.9.2_77l47gmqkrqiei5z7sbwz5iaj4
@@ -6034,6 +6036,14 @@ packages:
       react: 18.2.0
       scheduler: 0.23.0
 
+  /react-icons/4.7.1_react@18.2.0:
+    resolution: {integrity: sha512-yHd3oKGMgm7zxo3EA7H2n7vxSoiGmHk5t6Ou4bXsfcgWyhfDKMpyKfhHR6Bjnn63c+YXBLBPUql9H4wPJM6sXw==}
+    peerDependencies:
+      react: '*'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
     dev: true
@@ -6685,10 +6695,12 @@ packages:
     resolution: {integrity: sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==}
     dev: true
 
-  /tailwindcss/3.1.8:
+  /tailwindcss/3.1.8_postcss@8.4.14:
     resolution: {integrity: sha512-YSneUCZSFDYMwk+TGq8qYFdCA3yfBRdBlS7txSq0LUmzyeqRe3a8fBQzbz9M3WS/iFT4BNf/nmw9mEzrnSaC0g==}
     engines: {node: '>=12.13.0'}
     hasBin: true
+    peerDependencies:
+      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3

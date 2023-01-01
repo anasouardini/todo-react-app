@@ -1,6 +1,5 @@
 import React from 'react';
 import {NavLink, Outlet} from 'react-router-dom';
-import TODO from '../../todoModule';
 
 export default function MainLayout() {
     return (

@@ -13,7 +13,7 @@ const PORT = process.env.APIPORT ?? 2000;
 const app = express();
 
 // Cross Origin Resource Sharing
-const whitelist = ['http://127.0.0.1:3000'];
+const whitelist = [process.env.CLIENTADDRESS];
 const corsOptions = {
     origin: (origin, callback) => {
         if (whitelist.indexOf(origin) !== -1 || !origin) {

@@ -37,7 +37,8 @@
 		"@babel/preset-react": "^7.18.6",
 		"dotenv": "^16.0.2",
 		"react": "^18.2.0",
-		"react-dom": "^18.2.0"
+		"react-dom": "^18.2.0",
+		"react-icons": "^4.7.1"
 	},
 	"pnpm": {
 		"overrides": {

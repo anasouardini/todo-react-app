@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"dev": "node ./src/index.js",
+		"dev": "nodemon ./src/index.js",
 		"db": "prisma studio"
 	},
 	"devDependencies": {

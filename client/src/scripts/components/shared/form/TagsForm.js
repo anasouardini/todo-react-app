@@ -9,7 +9,7 @@ export default function TagsForm(props) {
 
     const style = {
         parent: {
-            background: 'rgba(255, 255, 255, 1)',
+            background: '#333',
             position: 'fixed',
             top: '50%',
             left: '50%',

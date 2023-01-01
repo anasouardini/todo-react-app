@@ -38,7 +38,7 @@ export default function Work() {
     const style = {
         parent: {
             width: '90vw',
-            margin: '0 auto',
+            margin: '30px auto 0',
         },
     };
 

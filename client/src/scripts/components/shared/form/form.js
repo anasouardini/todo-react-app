@@ -73,7 +73,7 @@ export default function Form(props) {
 
     const style = {
         pannel: {
-            background: 'rgba(255, 255, 255, 1)',
+            background: '#303030',
             position: 'fixed',
             top: '50%',
             left: '50%',
@@ -102,6 +102,10 @@ export default function Form(props) {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '10px',
+                },
+
+                label: {
+                    marginBottom: '20px',
                 },
 
                 field: {
@@ -239,20 +243,29 @@ export default function Form(props) {
                 if (fieldKey == 'tags') {
                     return (
                         <div name={field.type} data-type={field.type} key={fieldKey}>
+                            Tags: &nbsp;
+                            {field.value.map((tag) => (
+                                <Tag key={tag.id} style={{color: tag.fontclr, background: tag.bgclr}}>
+                                    {tag.text}
+                                </Tag>
+                            ))}
                             <button
+                                style={{
+                                    cursor: 'pointer',
+                                    width: 'max-content',
+                                    borderRadius: '10px',
+                                    marginLeft: '20px',
+                                    padding: '0 20px',
+                                    fontWeight: 'bolder',
+                                }}
                                 key={fieldKey}
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     showSubForm(field.type, field.value);
                                 }}
                             >
-                                Add Tags
+                                +
                             </button>
-                            {field.value.map((tag) => (
-                                <Tag key={tag.id} style={{color: tag.fontclr, background: tag.bgclr}}>
-                                    {tag.text}
-                                </Tag>
-                            ))}
                         </div>
                     );
                 }
@@ -273,7 +286,7 @@ export default function Form(props) {
                 // );
             } else {
                 return (
-                    <label key={fieldKey} name={fieldKey} data-type={field.type}>
+                    <label key={fieldKey} style={style.pannel.inputs.label} name={fieldKey} data-type={field.type}>
                         {fieldKey}
                         <input style={style.pannel.inputs.field} defaultValue={field.value} />
                     </label>
@@ -285,7 +298,7 @@ export default function Form(props) {
     return (
         <>
             <div
-                className="overlay"
+                className='overlay'
                 onClick={(e) => {
                     e.stopPropagation();
                     formAction(FORM_MODE.cancel, e);
@@ -295,7 +308,7 @@ export default function Form(props) {
                     <h2 style={style.pannel.h2}>{state.parentState.form.title} </h2>
 
                     {/* inputs */}
-                    <div className="fields" style={style.pannel.inputs}>
+                    <div className='fields' style={style.pannel.inputs}>
                         {listFields()}
                     </div>
 
@@ -310,16 +323,6 @@ export default function Form(props) {
                             }}
                         >
                             {state.parentState.form.submit}
-                        </button>
-                        <button
-                            style={style.pannel.buttons.button}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                formAction(FORM_MODE.cancel, e);
-                            }}
-                        >
-                            Cancel
                         </button>
 
                         {/* DELETE BUTTON */}

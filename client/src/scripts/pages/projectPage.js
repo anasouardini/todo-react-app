@@ -49,9 +49,9 @@ export default function ProjectPage() {
                     }}
                     className="path"
                 >
-                    <Link to="/work">Work</Link>{' '}
+                    <Link to="/">workflows</Link>
                     <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
-                    {TODO.getParent('project', state.itemObj.id).fields.title.value}{' '}
+                    {TODO.getParent('project', state.itemObj.id).fields.title.value}
                     <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
                     {state.itemObj.fields.title.value}
                 </div>
