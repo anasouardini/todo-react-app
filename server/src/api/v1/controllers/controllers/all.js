@@ -1,4 +1,5 @@
-const {create, read, update, remove} = require('./../../model/');
+const {read} = require('./../imports');
+
 const {verifiedUsername, updateHash, restructureAll} = require('./../shared');
 
 const readAll = async (req, res) => {
