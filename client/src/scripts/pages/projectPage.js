@@ -46,34 +46,39 @@ export default function ProjectPage() {
                         background: '#333',
                         color: 'white',
                         padding: '.5rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
                     }}
-                    className="path"
+                    className='path'
                 >
-                    <Link to="/">workflows</Link>
-                    <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
-                    {TODO.getParent('project', state.itemObj.id).fields.title.value}
-                    <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
-                    {state.itemObj.fields.title.value}
-                </div>
-                <div style={{marginTop: '2rem'}} className="project-container" data-id={state.itemObj.id}>
-                    {/* goals list */}
-                    {listChildren(state.itemObj, Goal)}
+                    <div  aria-label='path'>
+                        <Link to='/'>workflows</Link>
+                        <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
+                        {TODO.getParent('project', state.itemObj.id).fields.title.value}
+                        <span style={{fontSize: '1.2rem'}}>&nbsp;&gt;&nbsp;&nbsp;</span>
+                        {state.itemObj.fields.title.value}
+                    </div>
 
-                    {/* add a new goal Button*/}
+                    {/* add a new goal Button. yes this is a button. blame the old me*/}
                     <div
-                        className="cards-container empty-cards-container add-new-goal"
+                        className='add-new-goal'
                         data-id={state.itemObj.id}
-                        style={{order: '999999', cursor: 'pointer'}}
+                        style={{color: 'rgb(40 150 200)', cursor: 'pointer'}}
                         // onClick={showForm.bind(this, {setState, state}, FORM_MODE.create)}
                         onClick={(e) => {
                             e.stopPropagation();
                             showForm(state.itemObj.id, FORM_MODE.create);
                         }}
                     >
-                        <div style={{order: '999999', pointerEvents: 'none'}} className="add-goal-btn">
+                        <div style={{order: '999999', pointerEvents: 'none'}} className='add-goal-btn'>
                             <p style={{display: 'inline'}}>Add a New Goal</p>
                         </div>
                     </div>
+                </div>
+                <div style={{}} className='project-container' data-id={state.itemObj.id}>
+                    {/* goals list */}
+                    {listChildren(state.itemObj, Goal)}
 
                     {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
                     {state.form.show ? renderForm(state.itemObj.id) : <></>}

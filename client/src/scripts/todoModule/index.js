@@ -3,6 +3,9 @@ import factories from './factories';
 import BRIDGE from '../bridge/bridge';
 import deepClone from '../tools/deepClone';
 
+// state bridge
+import {Bridge as Bridger} from '../components/shared/bridger';
+
 const TODO = (() => {
     const dbObj = {
         hash: '',
@@ -235,6 +238,7 @@ const TODO = (() => {
     };
 
     const createItem = async (parentType, parentID, fields) => {
+        // console.log(parentType, parentID, fields)
         const childType = getChildType(parentType);
 
         let siblings = getChildren(parentType, parentID);
@@ -256,6 +260,7 @@ const TODO = (() => {
         );
 
         if (res) {
+            console.log(res);
             updateHash(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
@@ -274,18 +279,10 @@ const TODO = (() => {
             // console.log('modfied', modifiedFields);
             const targetItem = dbObj[itemType].items[id];
 
-            // check order validity
-            //! not fixed yet
-            //fixItemOrder(isItemOutOfOrder({...targetItem, fields: modifiedFields}, true));
-
-            //TODO: verify inputs
-            // if (properties.length != itemKeys.length) {
-            //     console.error('the input properties do not match item properties');
-            //     return;
-            // }
             const query = {filters: {id}, data: {...modifiedFields}};
 
             const response = await BRIDGE.update(itemType + 's', query);
+            // console.log(response)
 
             if (response) {
                 itemKeys.forEach((key) => {
@@ -298,18 +295,14 @@ const TODO = (() => {
         }
     };
 
-    //- not tested yet
     const moveItem = async (itemType, itemID, newParentID) => {
-        const response = await modifyItem(itemType, itemID, {parent: newParentID});
+        const parent = getParent(itemType, itemID);
+        deleteItem(itemType, itemID);
+        createItem(parent.type, newParentID, dbObj[itemType].items[itemID].fields);
 
-        if (response) {
-            const childrenIDs = getParent(itemType, itemID).childrenIDs;
-            childrenIDs.splice(childrenIDs.indexOf(itemID));
-            dbObj[dbObj[itemType].typeDe.parent].items[newParentID].childrenIDs.push(itemID);
-            return true;
-        }
-
-        return false;
+        Bridger.setState(parent.id, 'itemObj', undefined); //re-render old parent
+        Bridger.setState(newParentID, 'itemObj', undefined); // re-render current/new parent
+        return true;
     };
 
     const deleteItem = async (itemType, itemID) => {

@@ -110,7 +110,7 @@ export default function TagsForm(props) {
                 {/* Buttons */}
                 <div style={style.parent.buttons}>
                     <button style={style.parent.buttons.button} onClick={subFormAction.bind(this, 'submit')}>
-                        ADD
+                        Update
                     </button>
                     <button style={style.parent.buttons.button} onClick={subFormAction.bind(this, 'cancel')}>
                         Cancel

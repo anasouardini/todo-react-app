@@ -9,18 +9,17 @@
     // background: #EFEFEF;
     // border-radius: vars.$border-radius;
     // box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgb(209, 213, 219) 0px 0px 0px 1px inset;
-    padding: .5rem;
+    padding: .7rem;
 
-    & + & {
-      border-left: 2px solid white;
-    }
+    // & + & {
+      // border-left: 2px solid white;
+    // }
 
     &-header{
         position: relative;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: .5rem;
     }
 }
 

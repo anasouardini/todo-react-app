@@ -1,4 +1,5 @@
 import {React, useState, FORM_MODE, deepClone, TODO, Bridge} from '../../../imports/tools';
+import {FaPencilAlt} from 'react-icons/fa';
 import {TagsForm, Tag} from '../../../imports/components';
 
 export default function Form(props) {
@@ -212,6 +213,7 @@ export default function Form(props) {
                 //- blindly passing properties over to the factory function
                 // console.log(fields);
                 // console.log(newState.form.fields.child.tags);
+                console.log(parseFields(fields))
                 const response = await TODO.createItem(itemType, itemID, parseFields(fields));
                 if (response) {
                     newState = deepClone(state.parentState);
@@ -242,7 +244,15 @@ export default function Form(props) {
 
                 if (fieldKey == 'tags') {
                     return (
-                        <div name={field.type} data-type={field.type} key={fieldKey}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                            }}
+                            name={field.type}
+                            data-type={field.type}
+                            key={fieldKey}
+                        >
                             Tags: &nbsp;
                             {field.value.map((tag) => (
                                 <Tag key={tag.id} style={{color: tag.fontclr, background: tag.bgclr}}>
@@ -253,10 +263,13 @@ export default function Form(props) {
                                 style={{
                                     cursor: 'pointer',
                                     width: 'max-content',
-                                    borderRadius: '10px',
+                                    // borderRadius: '10px',
+                                    padding: '0',
+                                    border: 'none',
                                     marginLeft: '20px',
-                                    padding: '0 20px',
                                     fontWeight: 'bolder',
+                                    fontSize: '.9rem',
+                                    color: 'rgb(40 150 200)',
                                 }}
                                 key={fieldKey}
                                 onClick={(e) => {
@@ -264,7 +277,7 @@ export default function Form(props) {
                                     showSubForm(field.type, field.value);
                                 }}
                             >
-                                +
+                                <FaPencilAlt />
                             </button>
                         </div>
                     );
@@ -286,7 +299,12 @@ export default function Form(props) {
                 // );
             } else {
                 return (
-                    <label key={fieldKey} style={style.pannel.inputs.label} name={fieldKey} data-type={field.type}>
+                    <label
+                        key={fieldKey}
+                        style={style.pannel.inputs.label}
+                        name={fieldKey}
+                        data-type={field.type}
+                    >
                         {fieldKey}
                         <input style={style.pannel.inputs.field} defaultValue={field.value} />
                     </label>
@@ -315,7 +333,7 @@ export default function Form(props) {
                     {/* Buttons */}
                     <div style={style.pannel.buttons}>
                         <button
-                            style={style.pannel.buttons.button}
+                            style={{...style.pannel.buttons.button, ...{textTransform: 'capitalize'}}}
                             onClick={(e) => {
                                 e.stopPropagation();
                                 e.preventDefault();

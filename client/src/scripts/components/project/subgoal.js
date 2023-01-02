@@ -8,6 +8,8 @@ import {
     renderMenu,
     Bridge,
 } from '../../imports/tools';
+import {FaPencilAlt} from 'react-icons/fa';
+
 import {Tag} from '../../imports/components';
 import {listTags} from '../shared/sharedUtils';
 
@@ -38,17 +40,43 @@ const SubGoal = (props) => {
             title: {},
             edit: {
                 position: 'absolute',
-                top: '-4px',
+                top: '7px',
                 right: '10px',
                 cursor: 'pointer',
-                fontSize: '1.4rem',
+                fontSize: '1rem',
+                color: 'rgb(40, 150, 200)',
             },
         },
     };
 
+    const handleDragStart = (e) => {
+        // e.preventDefault();
+        e.dataTransfer.setData('subgoal', props.itemObj.id)
+    };
+
     return (
         <>
-            <div key={state.itemObj.id} style={style.parent} className="card" draggable="true">
+            <style>
+                {`
+                .card{
+                  padding: .5rem .8rem;
+                  background: rgb(40 40 40);
+                  border-radius: 5px
+                }
+                .card:hover
+                {
+                  background: rgb(50 50 50);
+                  border-radius: 5px
+                }
+                `}
+            </style>
+            <div
+                draggable='true'
+                onDragStart={handleDragStart}
+                key={state.itemObj.id}
+                style={style.parent}
+                className='card'
+            >
                 {/* sub goal tags */}
                 {listTags(state.form.fields.self.tags.value, Tag)}
 
@@ -62,7 +90,7 @@ const SubGoal = (props) => {
                     }}
                     style={style.parent.edit}
                 >
-                    ...
+                    <FaPencilAlt />
                 </span>
             </div>
 

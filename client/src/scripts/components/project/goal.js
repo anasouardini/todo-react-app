@@ -10,6 +10,7 @@ import {
     showMenu,
     renderForm,
     Bridge,
+    TODO
 } from '../../imports/tools';
 
 import {FaPlus, FaPencilAlt} from 'react-icons/fa';
@@ -50,14 +51,34 @@ const Goal = (props) => {
         },
     };
 
+    const handleDragIn = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e) => {
+        // e.preventDefault();
+        const subgoalID = e.dataTransfer.getData('subgoal');
+        TODO.moveItem('subgoal', subgoalID, props.itemObj.id);
+    };
+
     return (
         <div key={state.itemObj.id} className='cards-container'>
             {/* goal tags */}
             {listTags(state.form.fields.self.tags.value, Tag)}
 
             {/* goal header */}
-            <div className='cards-container-header'>
-                <h4>{state.itemObj.fields.title.value} </h4>
+            <div style={{marginBottom: '.8rem'}} className='cards-container-header'>
+                <h4
+                    style={{
+                        fontSize: '1.3rem',
+                        borderLeft: '4px solid rgb(40, 150, 200)',
+                        paddingLeft: '0.5rem',
+                        textTransform: 'capitalize',
+                    }}
+                >
+                    {state.itemObj.fields.title.value}{' '}
+                </h4>
                 <div
                     aria-label='buttons'
                     style={{
@@ -81,7 +102,7 @@ const Goal = (props) => {
                     <div
                         className='add-card-btn add-new-subgoal'
                         data-id={state.itemObj.id}
-                        style={{order: '999999'}}
+                        style={{cursor: 'pointer', order: '999999'}}
                         onClick={(e) => {
                             e.stopPropagation();
                             showForm(state.itemObj.id, FORM_MODE.create);
@@ -93,7 +114,16 @@ const Goal = (props) => {
             </div>
 
             {/* sub-goals list */}
-            {listChildren(state.itemObj, SubGoal)}
+            <div
+                droppable='true'
+                onDragOver={handleDragIn}
+                // onDragEnd={handleDragEnd}
+                onDrop={handleDrop}
+                aria-label='subGoals'
+                style={{display: 'flex', flexDirection: 'column', gap: '.5rem', minHeight: '38px'}}
+            >
+                {listChildren(state.itemObj, SubGoal)}
+            </div>
 
             {state.menu.show ? renderMenu(state.itemObj.id) : <></>}
             {state.form.show ? renderForm(state.itemObj.id) : <></>}
