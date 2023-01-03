@@ -63,6 +63,9 @@ const SubGoal = (props) => {
                   background: rgb(40 40 40);
                   border-radius: 5px
                 }
+                .card[draggable]:active{
+                  opacity: .2;
+                }
                 .card:hover
                 {
                   background: rgb(50 50 50);

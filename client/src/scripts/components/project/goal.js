@@ -10,7 +10,7 @@ import {
     showMenu,
     renderForm,
     Bridge,
-    TODO
+    TODO,
 } from '../../imports/tools';
 
 import {FaPlus, FaPencilAlt} from 'react-icons/fa';
@@ -54,10 +54,17 @@ const Goal = (props) => {
     const handleDragIn = (e) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
+        e.currentTarget.style.border = '2px solid #555';
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.currentTarget.style.border = '';
     };
 
     const handleDrop = (e) => {
         // e.preventDefault();
+        e.currentTarget.style.border = '';
         const subgoalID = e.dataTransfer.getData('subgoal');
         TODO.moveItem('subgoal', subgoalID, props.itemObj.id);
     };
@@ -115,8 +122,8 @@ const Goal = (props) => {
 
             {/* sub-goals list */}
             <div
-                droppable='true'
                 onDragOver={handleDragIn}
+                onDragLeave={handleDragLeave}
                 // onDragEnd={handleDragEnd}
                 onDrop={handleDrop}
                 aria-label='subGoals'
