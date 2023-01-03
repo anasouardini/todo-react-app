@@ -31,10 +31,12 @@ const prismaQuery = (mode, table, query) =>
         }); //- false if for production
 
 const create = (table, data) => {
-    // console.log(data);
+    console.log(data);
     Object.keys(data).forEach((propKey) => {
         data[propKey] = getTrueType(propKey, data[propKey]);
     });
+
+    console.log('l39 index.js: ', data)
 
     return prismaQuery('create', table, {data});
 };

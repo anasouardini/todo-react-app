@@ -110,6 +110,7 @@ const restructureAll = (parent) => {
 
 const restructureCreate = (response) => {
     const item = deepClone(response);
+    // console.log('l113 shared.js', item)
     item.fields = {};
 
     Object.keys(item).forEach((prop) => {

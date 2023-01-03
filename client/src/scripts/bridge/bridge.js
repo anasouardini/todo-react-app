@@ -59,6 +59,7 @@ const BRIDGE = (() => {
     // fetch ALL from db and populate cache
     const updateCacheAll = async () => {
         const response = await read('all', {});
+        // console.log(response)
 
         if (response.hasOwnProperty('errmsg')) {
             console.log('no work to load');

@@ -189,6 +189,7 @@ const TODO = (() => {
     };
     const fixTypes = (response) => {
         const res = deepClone(response);
+
         Object.keys(res.fields).forEach((key) => {
             const fixer = typeFixers[key];
             if (fixer) {
@@ -260,7 +261,7 @@ const TODO = (() => {
         );
 
         if (res) {
-            console.log(res);
+            // console.log(res);
             updateHash(res);
 
             dbObj[parentType].items[parentID].childrenIDs.push(res.id);
@@ -298,7 +299,24 @@ const TODO = (() => {
     const moveItem = async (itemType, itemID, newParentID) => {
         const parent = getParent(itemType, itemID);
         deleteItem(itemType, itemID);
-        createItem(parent.type, newParentID, dbObj[itemType].items[itemID].fields);
+
+        // get the higher order in the new parent
+        let highOrder = 0;
+        // console.log(dbObj[parent.type].items[newParentID])
+        dbObj[parent.type].items[newParentID].childrenIDs.forEach((childID) => {
+            const currentOrder = dbObj[itemType].items[childID].fields.order.value;
+            if (currentOrder > highOrder) {
+                highOrder = currentOrder;
+            }
+        });
+
+        // restructure fields
+        const itemFields = dbObj[itemType].items[itemID].fields;
+        delete itemFields.tags;
+        itemFields.order.value = highOrder+1;
+        // console.log(itemFields);
+
+        await createItem(parent.type, newParentID, itemFields);
 
         Bridger.setState(parent.id, 'itemObj', undefined); //re-render old parent
         Bridger.setState(newParentID, 'itemObj', undefined); // re-render current/new parent
