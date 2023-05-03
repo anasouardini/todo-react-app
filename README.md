@@ -1,4 +1,4 @@
-# todo-react-app
+# FullStack Todo App
 
 This was my first react project, just like learning new things, I've
 learned a ton about react as a library and ecosystem.
