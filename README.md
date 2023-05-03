@@ -16,10 +16,10 @@ why big project do not jut switch technologies like that.
 
 ### Front-End
 2. React-router
-3. Sass
-4. React-icons
+3. Sass (This one only made harder to style things)
+4. React-icons (very cool piece of tech)
 
 ### Back-End
-1. prisma
+1. prisma (I didn't need this one, it made thing take so long to run)
 2. express.js
 3. helmet
